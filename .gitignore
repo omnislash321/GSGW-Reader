@@ -1,6 +1,9 @@
 # dependencies
 node_modules/
 
+# generated build output (Cloudflare Pages runs `node scripts/build.mjs` on push)
+website/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 // Build the GSGW static site from /chapters into /website.
-import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync, cpSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "website");
 const CHAPTERS_OUT = join(OUT, "chapters");
+const ASSETS_SRC = join(ROOT, "assets");          // hand-authored css/js/img (source of truth)
+const ASSETS_OUT = join(OUT, "assets");
 const SITE = JSON.parse(readFileSync(join(ROOT, "site.json"), "utf8"));
 const BASE = readFileSync(join(ROOT, "templates", "base.html"), "utf8");
 
@@ -138,6 +140,9 @@ function build() {
   rmSync(CHAPTERS_OUT, { recursive: true, force: true }); // clear stale pages
   mkdirSync(CHAPTERS_OUT, { recursive: true });
 
+  rmSync(ASSETS_OUT, { recursive: true, force: true });   // copy css/js/img into the output
+  cpSync(ASSETS_SRC, ASSETS_OUT, { recursive: true });
+
   const files = readdirSync(join(ROOT, "chapters"))
     .filter((f) => f.endsWith(".md") || f.endsWith(".html")).sort();
   const chapters = files.map((f) => {
@@ -147,7 +152,6 @@ function build() {
     return {
       num,
       title: meta.title ?? "Untitled",
-      arc: meta.arc ?? "",
       slug: `ch${num}`,
       // .html chapters are pre-rendered fragments (e.g. imported from Google Docs);
       // .md chapters go through the lightweight markdown converter.
@@ -210,7 +214,7 @@ ${actionbar({ comments: false, chapters: false })}`;
     '<a class="cta" href="/">Return to the records</a></div></main>';
   writeFileSync(join(OUT, "404.html"), page(`404 · ${SITE.site_name}`, "Not found", nf));
 
-  console.log(`Built ${chapters.length} chapters + splash + toc + 404 -> ${OUT}`);
+  console.log(`Built ${chapters.length} chapters + splash + toc + 404 + assets -> ${OUT}`);
 }
 
 build();

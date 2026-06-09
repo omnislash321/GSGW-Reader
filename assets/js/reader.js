@@ -106,7 +106,7 @@
     if (!cfgEl || !paras.length) return;
     var CFG; try { CFG = JSON.parse(cfgEl.textContent); } catch (e) { return; }
     var BUBBLE = '<svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
-    var openTerm = null, openBtn = null, activePara = null;
+    var openTerm = null, activePara = null;
 
     // one reusable side panel (built once) that hosts the giscus embed for the active paragraph
     var panel = document.createElement("div");
@@ -157,7 +157,7 @@
       panelBody.innerHTML = "";                         // unmount the giscus iframe
       panel.style.left = panel.style.right = panel.style.width = "";
       if (activePara) activePara.classList.remove("cp-active");
-      openBtn = openTerm = activePara = null;
+      openTerm = activePara = null;
     }
     function badge(btn, n) {
       n = +n || 0;
@@ -174,7 +174,7 @@
       if (term === openTerm) syncIntro(term);
       persist();
     }
-    function open(p, term, btn) {
+    function open(p, term) {
       if (openTerm === term) { close(); return; }      // same paragraph -> toggle the panel shut
       if (activePara) activePara.classList.remove("cp-active");
       panelBody.innerHTML = "";                         // swap out the previous paragraph's embed
@@ -200,7 +200,7 @@
       s.crossOrigin = "anonymous"; s.async = true;
       panelBody.appendChild(s);
       p.classList.add("cp-active"); activePara = p;
-      openTerm = term; openBtn = btn;
+      openTerm = term;
       syncIntro(term);                                  // paint prompt state from cached count
       panel.classList.add("open");
       positionPanel();
@@ -216,7 +216,7 @@
       btn.innerHTML = BUBBLE + '<span class="cp-n"></span>';
       btnByTerm[term] = btn;
       badge(btn, counts[term]);                        // paint from cache instantly
-      btn.addEventListener("click", function (e) { e.stopPropagation(); open(p, term, btn); });
+      btn.addEventListener("click", function (e) { e.stopPropagation(); open(p, term); });
       p.appendChild(btn);                              // absolutely positioned in the margin
     });
 
@@ -244,9 +244,9 @@
 
   // ---- reading progress: per-chapter state (unread / in progress / read) ----
   // Per-device only (localStorage). Each chapter is in one of three states:
-  //   unread     — no record
-  //   reading    — scrolled partway (auto-tracked) ; we also remember the scroll position
-  //   read        — finished by scrolling, or marked read manually (sticky `r` flag)
+  //   unread   — no record
+  //   reading  — scrolled partway (auto-tracked); we also remember the scroll position
+  //   read     — finished by scrolling, or marked read manually (sticky `r` flag)
   // The splash + TOC surface a resume card; the TOC also shows a clickable state toggle per
   // chapter, and the settings panel can mark the current chapter read/unread without scrolling.
   (function () {
@@ -396,8 +396,7 @@
     // Settings panel: mark the current chapter read/unread (no scrolling needed).
     function wireMark() {
       var btn = document.getElementById("sp-mark-read");
-      if (!btn) return;
-      if (!chap) { btn.style.display = "none"; return; }
+      if (!btn || !chap) return;                         // row is hidden off a chapter page
       var info = { slug: chap.getAttribute("data-slug"), num: chap.getAttribute("data-num"),
                    title: chap.getAttribute("data-title") || document.title };
       refreshMark = function () {
@@ -418,15 +417,12 @@
     function wireClear() {
       var chBtn = document.getElementById("sp-clear-ch");
       var allBtn = document.getElementById("sp-clear-all");
-      if (chBtn) {
-        if (!chap) chBtn.style.display = "none";
-        else chBtn.addEventListener("click", function () {
-          var slug = chap.getAttribute("data-slug");
-          var m = readMap(); delete m[slug]; writeMap(m);
-          try { if (localStorage.getItem(LKEY) === slug) localStorage.removeItem(LKEY); } catch (e) {}
-          suppress = true; clearUI(); flash(chBtn);      // stay cleared until the reader navigates away
-        });
-      }
+      if (chBtn && chap) chBtn.addEventListener("click", function () {   // row is hidden off a chapter page
+        var slug = chap.getAttribute("data-slug");
+        var m = readMap(); delete m[slug]; writeMap(m);
+        try { if (localStorage.getItem(LKEY) === slug) localStorage.removeItem(LKEY); } catch (e) {}
+        suppress = true; clearUI(); flash(chBtn);        // stay cleared until the reader navigates away
+      });
       if (allBtn) allBtn.addEventListener("click", function () {
         try { localStorage.removeItem(PKEY); localStorage.removeItem(LKEY); } catch (e) {}
         suppress = true; clearUI(); flash(allBtn);
