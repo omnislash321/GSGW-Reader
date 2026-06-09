@@ -10,7 +10,8 @@ const CHAPTERS_OUT = join(OUT, "chapters");
 const SITE = JSON.parse(readFileSync(join(ROOT, "site.json"), "utf8"));
 const BASE = readFileSync(join(ROOT, "templates", "base.html"), "utf8");
 
-const THEMES = [["ghost", "Ghost Story"], ["office", "Office Hours"],
+const THEMES = [["nightfall", "Nightfall"],
+  ["charcoal", "Charcoal"], ["ghost", "Ghost Story"], ["office", "Office Hours"],
   ["after-dark", "After Dark"], ["daydream", "Daydream"]];
 
 function esc(s, quote = true) {
@@ -114,6 +115,23 @@ function giscusBlock() {
  data-lang="en" crossorigin="anonymous" async></script></section>`;
 }
 
+// Give every top-level paragraph a stable, chapter-unique id (ch222-p1, -p2, …).
+// reader.js uses these as giscus "specific" mapping terms for per-paragraph comments,
+// so the id IS the discussion title — keep it stable across rebuilds.
+function addParaIds(html, slug) {
+  let n = 0;
+  return html.replace(/<p(\s|>)/g, (_m, after) => `<p id="${slug}-p${++n}"${after}`);
+}
+
+// Expose the giscus config to reader.js so it can mount per-paragraph embeds on demand.
+function giscusCfg() {
+  if (!commentsOn()) return "";
+  const { repo, repoId, category, categoryId } = SITE.giscus;
+  const countsApi = SITE.counts_api || "";
+  return `<script id="giscus-cfg" type="application/json">` +
+    JSON.stringify({ repo, repoId, category, categoryId, countsApi }) + `</script>`;
+}
+
 function build() {
   rmSync(CHAPTERS_OUT, { recursive: true, force: true }); // clear stale pages
   mkdirSync(CHAPTERS_OUT, { recursive: true });
@@ -147,9 +165,10 @@ ${nxt ? `<a href="/chapters/${nxt.slug}.html">Next →</a>` : "<span></span>"}
     const content = `<main class="chapter">
 <div class="page">
 <header class="chead"><h1>${esc(c.title)}</h1></header>
-<article class="cbody" id="cbody">${c.html}</article>
+<article class="cbody" id="cbody">${addParaIds(c.html, c.slug)}</article>
 </div>
 ${nav}
+${giscusCfg()}
 ${giscusBlock()}
 </main>
 ${actionbar({ comments: commentsOn(), chapters: true })}`;

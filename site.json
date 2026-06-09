@@ -6,6 +6,7 @@
   "tagline": "The doors will close in 30 seconds. Once closed, they will never open again.",
   "description": "An unofficial fan reader for Got Dropped Into A Ghost Story, Still Gotta Work (GSGW).",
   "site_url": "https://gsgw-reader.pages.dev",
+  "counts_api": "https://gsgw-counts.omnislash321.workers.dev/counts",
   "giscus": {
     "repo": "omnislash321/GSGW-Reader",
     "repoId": "R_kgDOS1PEgw",

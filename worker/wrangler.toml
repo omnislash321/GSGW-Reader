@@ -1,0 +1,8 @@
+name = "gsgw-counts"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# Read-only public values. The GitHub token is a *secret* (see README), never put it here.
+[vars]
+GITHUB_REPO = "omnislash321/GSGW-Reader"
+GITHUB_CATEGORY = "Comments"
