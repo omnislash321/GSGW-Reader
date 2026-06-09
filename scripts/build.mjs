@@ -96,7 +96,14 @@ ${btn("ab-top", "Back to top", ICONS.up)}
 </div>`;
 }
 
+// True once giscus is configured with real values (not missing / placeholder).
+function commentsOn() {
+  const g = SITE.giscus;
+  return !!(g && g.repo && g.repoId && !g.repo.includes("YOUR_") && !g.repoId.includes("REPLACE"));
+}
+
 function giscusBlock() {
+  if (!commentsOn()) return ""; // skip the section until giscus is configured
   const g = SITE.giscus;
   return `<section class="comments"><h2>Discussion</h2>
 <script src="https://giscus.app/client.js"
@@ -145,7 +152,7 @@ ${nxt ? `<a href="/chapters/${nxt.slug}.html">Next →</a>` : "<span></span>"}
 ${nav}
 ${giscusBlock()}
 </main>
-${actionbar({ comments: true, chapters: true })}`;
+${actionbar({ comments: commentsOn(), chapters: true })}`;
     writeFileSync(join(CHAPTERS_OUT, `${c.slug}.html`),
       page(`${c.title} · ${SITE.site_name}`, SITE.description, content));
   });
