@@ -83,7 +83,8 @@ a:hover{text-decoration:underline}
 .cp-btn.has{color:var(--accent)}
 .cp-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cp-n:empty{display:none}
-.cbody>p.cp-active{box-shadow:-3px 0 0 var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);border-radius:2px}
+.cbody>p.cp-active,
+.cbody>p:has(.cp-btn:hover){box-shadow:-3px 0 0 var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);border-radius:2px}
 
 /* side panel that holds the giscus embed for the active paragraph */
 .cp-panel{position:fixed;top:0;right:0;bottom:0;z-index:60;width:min(26rem,100vw);
@@ -96,6 +97,7 @@ a:hover{text-decoration:underline}
   text-transform:uppercase;letter-spacing:.12em;font-size:.72rem}
 .cp-panel-close{background:0;border:0;color:var(--muted);font-size:1.5rem;line-height:1;cursor:pointer;padding:0 .25rem}
 .cp-panel-close:hover{color:var(--accent)}
+.cp-panel-intro{flex:0 0 auto;margin:0;padding:.7rem 1.1rem 0;color:var(--muted);font-size:.9rem}
 .cp-panel-body{flex:1 1 auto;overflow-y:auto;padding:1rem 1.1rem;-webkit-overflow-scrolling:touch}
 .cp-empty{color:var(--muted);font-style:italic;font-size:.92rem;margin:.4rem 0 0}
 @media(max-width:680px){
@@ -106,10 +108,27 @@ a:hover{text-decoration:underline}
 .chnav{display:flex;justify-content:space-between;gap:1rem;margin:3rem 0 0;padding-top:1.5rem;border-top:1px solid var(--border)}
 
 .chlist{list-style:none;margin:0;padding:0}
-.chlist li{border-bottom:1px solid var(--border)}
-.chlist a{display:block;padding:.9rem .25rem;color:var(--fg);font-weight:600}
+.chlist li{display:flex;align-items:center;border-bottom:1px solid var(--border)}
+.chlist a{flex:1;padding:.9rem .25rem;color:var(--fg);font-weight:600}
 .chlist a:hover{background:var(--card);text-decoration:none}
+.chlist li.read a{color:var(--muted)}
+.ch-toggle{flex:0 0 auto;margin-left:.6rem;cursor:pointer;font:inherit;font-weight:600;font-size:.66rem;
+  text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;padding:.2rem .6rem;border-radius:999px;
+  border:1px solid var(--border);background:var(--bg);color:var(--muted)}
+.ch-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.ch-toggle.is-read{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--border))}
+.ch-toggle.is-unread{opacity:.6}
 .back{margin-top:2rem}
+
+/* "continue where you left off" card (splash + toc; populated by reader.js) */
+.resume-slot{margin:0 0 1.4rem}
+.resume-card{display:block;text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.7rem .9rem}
+.resume-card:hover{border-color:var(--accent);text-decoration:none}
+.resume-k{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:.66rem;color:var(--muted)}
+.resume-t{display:block;color:var(--fg);font-weight:600;margin:.15rem 0 .5rem}
+.resume-bar{display:block;height:5px;border-radius:999px;background:var(--border);overflow:hidden}
+.resume-bar>span{display:block;height:100%;background:var(--accent)}
+.resume-p{display:block;font-size:.72rem;color:var(--muted);margin-top:.35rem}
 
 .comments{margin-top:3rem;border-top:1px solid var(--border);padding-top:1.5rem}
 .comments h2{font-size:1.1rem;color:var(--muted)}

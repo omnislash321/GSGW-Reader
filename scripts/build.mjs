@@ -93,6 +93,8 @@ ${btn("ab-top", "Back to top", ICONS.up)}
 <label class="sp-row">Theme <select id="theme">${opts}</select></label>
 <div class="sp-row">Font size <span class="sp-grp"><button data-font="-1">A−</button><button data-font="1">A+</button></span></div>
 <div class="sp-row">Line height <span class="sp-grp"><button data-lh="-1">−</button><button data-lh="1">+</button></span></div>
+<div class="sp-row" id="sp-progress-row">This chapter <span class="sp-grp"><button id="sp-mark-read">Mark read</button><button id="sp-clear-ch">Clear</button></span></div>
+<div class="sp-row">All progress <span class="sp-grp"><button id="sp-clear-all">Clear</button></span></div>
 <button class="sp-reset" id="sp-reset">Reset to defaults</button>
 </div>`;
 }
@@ -162,7 +164,7 @@ ${prev ? `<a href="/chapters/${prev.slug}.html">← Prev</a>` : "<span></span>"}
 <a href="/toc.html">Menu</a>
 ${nxt ? `<a href="/chapters/${nxt.slug}.html">Next →</a>` : "<span></span>"}
 </nav>`;
-    const content = `<main class="chapter">
+    const content = `<main class="chapter" data-slug="${c.slug}" data-num="${esc(String(c.num))}" data-title="${esc(c.title)}">
 <div class="page">
 <header class="chead"><h1>${esc(c.title)}</h1></header>
 <article class="cbody" id="cbody">${addParaIds(c.html, c.slug)}</article>
@@ -180,6 +182,7 @@ ${actionbar({ comments: commentsOn(), chapters: true })}`;
     `<li data-num="${esc(String(c.num))}" data-title="${esc(c.title.toLowerCase())}">` +
     `<a href="/chapters/${c.slug}.html">${esc(c.title)}</a></li>`).join("");
   const toc = `<main class="toc"><header class="chead"><p class="kicker">⟨Darkness⟩ · Recorded Incidents</p><h1>Contents</h1></header>
+<div class="resume-slot" data-resume hidden></div>
 <div class="toc-controls">
 <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">
 <button id="toc-sort" data-dir="asc">Sort: Oldest first</button>
@@ -195,6 +198,7 @@ ${actionbar({ comments: false, chapters: false })}`;
 <img class="cover" src="/assets/img/logo.png" alt="${esc(SITE.brand)}">
 <h1>${esc(SITE.brand)}</h1>
 <blockquote class="disc">“${esc(SITE.tagline)}”</blockquote>
+<div class="resume-slot" data-resume hidden></div>
 <a class="cta" href="/toc.html">Open the Records →</a>
 </div>
 <div class="scan" aria-hidden="true"></div>

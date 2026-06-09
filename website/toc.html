@@ -12,6 +12,7 @@
 </head>
 <body>
 <main class="toc"><header class="chead"><p class="kicker">⟨Darkness⟩ · Recorded Incidents</p><h1>Contents</h1></header>
+<div class="resume-slot" data-resume hidden></div>
 <div class="toc-controls">
 <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">
 <button id="toc-sort" data-dir="asc">Sort: Oldest first</button>
@@ -30,6 +31,8 @@
 <label class="sp-row">Theme <select id="theme"><option value="nightfall">Nightfall</option><option value="charcoal">Charcoal</option><option value="ghost">Ghost Story</option><option value="office">Office Hours</option><option value="after-dark">After Dark</option><option value="daydream">Daydream</option></select></label>
 <div class="sp-row">Font size <span class="sp-grp"><button data-font="-1">A−</button><button data-font="1">A+</button></span></div>
 <div class="sp-row">Line height <span class="sp-grp"><button data-lh="-1">−</button><button data-lh="1">+</button></span></div>
+<div class="sp-row" id="sp-progress-row">This chapter <span class="sp-grp"><button id="sp-mark-read">Mark read</button><button id="sp-clear-ch">Clear</button></span></div>
+<div class="sp-row">All progress <span class="sp-grp"><button id="sp-clear-all">Clear</button></span></div>
 <button class="sp-reset" id="sp-reset">Reset to defaults</button>
 </div>
 <script src="/assets/js/reader.js" defer></script>
