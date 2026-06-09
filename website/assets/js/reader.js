@@ -115,7 +115,9 @@
       '<div class="cp-panel-head"><span>Paragraph comments</span>' +
       '<button class="cp-panel-close" type="button" aria-label="Close comments">×</button></div>' +
       '<div class="cp-panel-body"></div>';
-    document.body.appendChild(panel);
+    // Insert the panel as <body>'s first element so its giscus container is the first ".giscus"
+    // in the DOM — giscus binds to the first one, which must be the panel, not the bottom embed.
+    document.body.insertBefore(panel, document.body.firstChild);
     var panelBody = panel.querySelector(".cp-panel-body");
     panel.querySelector(".cp-panel-close").addEventListener("click", function () { close(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && openTerm) close(); });
@@ -131,14 +133,25 @@
     } catch (e) {}
 
     function gTheme() { return GISCUS_THEME[root.getAttribute("data-theme")] || "dark"; }
-    function paraText(p) {
-      var c = p.cloneNode(true), b = c.querySelector(".cp-btn");
-      if (b) b.remove();                               // drop the button text from the quote
-      return (c.textContent || "").replace(/\s+/g, " ").trim();
+    // Dock the panel flush to the right of the reading column when there's room beside it;
+    // otherwise fall back to the right-edge drawer (CSS default) on narrow screens.
+    function positionPanel() {
+      if (!panel.classList.contains("open")) return;
+      var ref = document.querySelector(".page") || document.querySelector(".chapter");
+      if (!ref) return;
+      var right = ref.getBoundingClientRect().right;
+      var avail = window.innerWidth - right - 8;        // 8px gutter between text and panel
+      if (avail >= 360) {
+        panel.style.left = (right + 8) + "px"; panel.style.right = "auto"; panel.style.width = avail + "px";
+      } else {
+        panel.style.left = panel.style.right = panel.style.width = "";
+      }
     }
+    window.addEventListener("resize", positionPanel);
     function close() {
       panel.classList.remove("open");
       panelBody.innerHTML = "";                         // unmount the giscus iframe
+      panel.style.left = panel.style.right = panel.style.width = "";
       if (activePara) activePara.classList.remove("cp-active");
       openBtn = openTerm = activePara = null;
     }
@@ -160,10 +173,15 @@
       if (openTerm === term) { close(); return; }      // same paragraph -> toggle the panel shut
       if (activePara) activePara.classList.remove("cp-active");
       panelBody.innerHTML = "";                         // swap out the previous paragraph's embed
-      var quote = document.createElement("p");          // show which paragraph you're commenting on
-      quote.className = "cp-panel-quote";
-      quote.textContent = paraText(p).slice(0, 240);
-      panelBody.appendChild(quote);
+      // giscus binds to the first ".giscus" container in the DOM. The panel is <body>'s first
+      // element, so this host wins over the chapter-wide embed at the bottom of the page.
+      var host = document.createElement("div");
+      host.className = "giscus";
+      var empty = document.createElement("p");          // giscus clears the host when it paints
+      empty.className = "cp-empty";
+      empty.textContent = "Be the first to comment.";
+      host.appendChild(empty);
+      panelBody.appendChild(host);
       var s = document.createElement("script");
       s.src = "https://giscus.app/client.js";
       var attrs = {
@@ -179,6 +197,7 @@
       p.classList.add("cp-active"); activePara = p;
       openTerm = term; openBtn = btn;
       panel.classList.add("open");
+      positionPanel();
     }
 
     paras.forEach(function (p) {
