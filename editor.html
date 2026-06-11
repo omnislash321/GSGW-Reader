@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Chapter editor for GSGW Reader">
+  <title>Chapter Editor · GSGW Reader</title>
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/img/favicon.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0f24;
+      --fg: #d7d9f2;
+      --muted: #8186b8;
+      --accent: #8a6cf0;
+      --card: #141936;
+      --border: #272c52;
+      --serif: Georgia, "Times New Roman", serif;
+      --read-size: 1.125rem;
+      --read-lh: 1.7;
+    }
+
+    [data-theme=office] { --bg:#f4f6fb; --fg:#1c2333; --muted:#6b7585; --accent:#2f5bd0; --card:#fff; --border:#dfe4ee; }
+    [data-theme=after-dark] { --bg:#080b08; --fg:#9ff7a8; --muted:#5d8a63; --accent:#28c247; --card:#0e140e; --border:#1e2a1e; }
+    [data-theme=ghost] { --bg:#0c0f24; --fg:#d7d9f2; --muted:#8186b8; --accent:#8a6cf0; --card:#141936; --border:#272c52; }
+    [data-theme=nightfall] { --bg:#10141f; --fg:#e7e9f0; --muted:#8b91a6; --accent:#6f93f0; --card:#171c2b; --border:#262d40; }
+    [data-theme=charcoal] { --bg:#16181c; --fg:#e8e8ea; --muted:#8c8e96; --accent:#8d9bb5; --card:#1d2025; --border:#2c2f36; }
+    [data-theme=daydream] { --bg:#f3e9f6; --fg:#4a445f; --muted:#9b8fae; --accent:#c87fb0; --card:#fffdfe; --border:#e7d8ee; }
+
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+
+    .auth-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .auth-screen.hidden { display: none; }
+    .auth-box { background: var(--card); padding: 2rem; border-radius: 8px; max-width: 400px; color: var(--fg); }
+    .auth-box h1 { margin-bottom: 1rem; font-size: 1.5rem; }
+    .auth-box input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 4px; font-size: 1rem; background: var(--bg); color: var(--fg); }
+    .auth-box button { width: 100%; padding: 0.75rem; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    .auth-box button:hover { opacity: 0.9; }
+
+    .editor-container { display: flex; height: 100vh; }
+    .editor-container.hidden { display: none; }
+
+    .sidebar { width: 250px; background: var(--card); border-right: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
+    .sidebar h2 { font-size: 0.9rem; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .chapters-head { display: flex; align-items: center; justify-content: space-between; }
+    .add-ch-btn { background: var(--accent); color: #fff; border: none; border-radius: 4px; width: 1.5rem; height: 1.5rem; line-height: 1; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .add-ch-btn:hover { opacity: 0.9; }
+    .chapter-list { list-style: none; }
+    .chapter-list li { padding: 0.5rem; cursor: pointer; border-radius: 4px; color: var(--fg); position: relative; }
+    .chapter-list li:hover { background: var(--border); }
+    .chapter-list li.active { background: var(--accent); color: white; }
+
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .header { background: var(--card); padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .header h1 { font-size: 1.2rem; margin: 0; }
+    .header-meta { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; }
+    .controls { display: flex; gap: 0.75rem; align-items: center; }
+    .save-btn, .create-pr-btn { padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+    .save-btn:hover, .create-pr-btn:hover { opacity: 0.9; }
+    .save-btn:disabled, .create-pr-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status { font-size: 0.85rem; color: var(--muted); }
+    .theme-select { padding: 0.4rem; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--fg); cursor: pointer; font-size: 0.9rem; }
+
+    .metadata-panel { background: var(--card); padding: 1.5rem; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+    .metadata-field { display: flex; flex-direction: column; }
+    .metadata-field label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+    .metadata-field input { padding: 0.75rem; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--fg); font-family: inherit; font-size: 1rem; }
+    .metadata-field input:focus { outline: none; border-color: var(--accent); background: var(--bg); }
+
+    /* toolbar */
+    .toolbar { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; padding: 0.6rem 1rem; background: var(--card); border-bottom: 1px solid var(--border); }
+    .toolbar button { background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.7rem; cursor: pointer; font-size: 0.9rem; min-width: 2.2rem; }
+    .toolbar button:hover { border-color: var(--accent); }
+    .toolbar button.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .toolbar .divider { width: 1px; height: 1.5rem; background: var(--border); margin: 0 0.25rem; }
+    .toolbar input[type=color] { width: 2.2rem; height: 2rem; padding: 2px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); cursor: pointer; }
+    .toolbar select { background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: 4px; padding: 0.35rem; cursor: pointer; font-size: 0.85rem; }
+    .toolbar label { font-size: 0.75rem; color: var(--muted); }
+
+    /* editor surface — mirrors the reading site .cbody */
+    .editor-scroll { flex: 1; overflow-y: auto; }
+    #editor {
+      max-width: 54rem;
+      margin: 0 auto;
+      padding: 2rem 2.4rem 6rem;
+      outline: none;
+      font-family: var(--serif);
+      font-size: var(--read-size);
+      line-height: var(--read-lh);
+      color: var(--fg);
+      overflow-wrap: break-word;
+    }
+    #editor p { margin: 0 0 1.1em; }
+    #editor em { font-style: italic; }
+    #editor strong { font-weight: 700; }
+    #editor h2 { font-size: 1.25rem; margin: 1.8em 0 0.6em; }
+    #editor blockquote { border-left: 3px solid var(--accent); margin: 1.4em 0; padding: 0.2em 1em; color: var(--muted); font-style: italic; }
+    #editor .center { text-align: center; }
+    #editor .right { text-align: right; }
+    #editor .sb { border: 0; text-align: center; margin: 2em 0; }
+    #editor .sb::before { content: "\203B \203B \203B"; color: var(--muted); letter-spacing: 0.4em; }
+    #editor:focus { outline: none; }
+
+    .toast { position: fixed; bottom: 1rem; right: 1rem; background: var(--accent); color: white; padding: 1rem; border-radius: 4px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .toast.error { background: #dc3545; }
+    .toast.info { background: var(--accent); }
+
+    .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+    .loading-overlay.hidden { display: none; }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1500; }
+    .modal.hidden { display: none; }
+    .modal-box { background: var(--card); padding: 2rem; border-radius: 8px; max-width: 500px; color: var(--fg); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .modal-box h2 { margin-bottom: 1rem; font-size: 1.2rem; }
+    .modal-box p { margin-bottom: 1.5rem; color: var(--muted); line-height: 1.5; white-space: pre-line; }
+    .modal-buttons { display: flex; gap: 1rem; justify-content: flex-end; }
+    .modal-btn { padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.95rem; font-weight: 500; }
+    .modal-btn-primary { background: var(--accent); color: white; }
+    .modal-btn-primary:hover { opacity: 0.9; }
+    .modal-btn-secondary { background: var(--border); color: var(--fg); }
+    .modal-btn-secondary:hover { background: var(--border); opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="modal hidden" id="confirmModal">
+    <div class="modal-box">
+      <h2 id="modalTitle">Confirm</h2>
+      <p id="modalMessage"></p>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn modal-btn-primary" onclick="confirmModal()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="newChapterModal">
+    <div class="modal-box">
+      <h2>Add New Chapter</h2>
+      <div class="metadata-field" style="margin-bottom:1rem;">
+        <label for="newChNumber">Chapter number</label>
+        <input type="text" id="newChNumber" placeholder="e.g. 372" inputmode="numeric">
+      </div>
+      <div class="metadata-field" style="margin-bottom:1.5rem;">
+        <label for="newChTitle">Title</label>
+        <input type="text" id="newChTitle" placeholder="Chapter title (optional)">
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-secondary" onclick="closeNewChapterModal()">Cancel</button>
+        <button class="modal-btn modal-btn-primary" onclick="createNewChapter()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-box">
+      <h1>Chapter Editor</h1>
+      <input type="password" id="passwordInput" placeholder="Password" />
+      <button onclick="authenticate()">Enter</button>
+    </div>
+  </div>
+
+  <div class="editor-container hidden" id="editorContainer">
+    <div class="sidebar">
+      <h2 class="chapters-head">Chapters <button class="add-ch-btn" id="addChapterBtn" title="Add new chapter" onclick="promptNewChapter()">+</button></h2>
+      <ul class="chapter-list" id="chapterList"></ul>
+    </div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-top">
+          <div>
+            <h1 id="chapterTitle">GSGW Chapter Editor</h1>
+            <div class="header-meta">Last published: <span id="publishedDate">—</span></div>
+          </div>
+          <div class="controls">
+            <select id="themeSelect" onchange="switchTheme(this.value)" class="theme-select">
+              <option value="nightfall">Nightfall</option>
+              <option value="ghost">Ghost Story</option>
+              <option value="charcoal">Charcoal</option>
+              <option value="office">Office Hours</option>
+              <option value="after-dark">After Dark</option>
+              <option value="daydream">Daydream</option>
+            </select>
+            <span class="status" id="status">Not authenticated</span>
+            <button class="save-btn" onclick="saveChapter()">Save</button>
+            <button class="save-btn" style="background:var(--border);color:var(--fg);" onclick="revertChapter()" title="Discard saved local changes and reload from the published source">Revert</button>
+            <button class="create-pr-btn" id="prBtn" onclick="createPR(event)">Create PR</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="metadata-panel">
+        <div class="metadata-field">
+          <label for="metaTitle">Title</label>
+          <input type="text" id="metaTitle" placeholder="Chapter title">
+        </div>
+        <div class="metadata-field">
+          <label for="metaNumber">Number</label>
+          <input type="text" id="metaNumber" placeholder="Chapter number">
+        </div>
+      </div>
+
+      <div class="toolbar" id="toolbar">
+        <button type="button" data-cmd="bold" title="Bold" style="font-weight:bold;">B</button>
+        <button type="button" data-cmd="italic" title="Italic" style="font-style:italic;">I</button>
+        <span class="divider"></span>
+        <label>Color</label>
+        <input type="color" id="colorPicker" title="Text color" value="#8a6cf0">
+        <input type="text" id="colorHex" title="Hex color" placeholder="#rrggbb" value="#8a6cf0" maxlength="7" style="width:6.5rem;font-family:monospace;">
+        <button type="button" data-cmd="clearColor" title="Remove color">⌫</button>
+        <span class="divider"></span>
+        <label>Size</label>
+        <select id="fontSizeSelect" title="Font size">
+          <option value="">—</option>
+          <option value="0.85em">Small</option>
+          <option value="1.15em">Large</option>
+          <option value="1.4em">XL</option>
+        </select>
+        <span class="divider"></span>
+        <button type="button" data-cmd="left" title="Align left">⯇</button>
+        <button type="button" data-cmd="center" title="Align center">≡</button>
+        <button type="button" data-cmd="right" title="Align right">⯈</button>
+        <span class="divider"></span>
+        <button type="button" data-cmd="sceneBreak" title="Scene break">⁂</button>
+      </div>
+
+      <div class="editor-scroll">
+        <div id="editor" contenteditable="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://gsgw-counts.omnislash321.workers.dev';
+
+    let sessionToken = null;
+    let currentChapter = null;
+    let currentChapterMetadata = {};
+    let originalChapterHtml = '';
+    let editor = null;
+    let unsavedChanges = false;
+    let lastSaveTime = null;
+    let isLoadingChapter = false;
+    let isCreatingPR = false;
+    let pendingModalAction = null;
+    let draftPRMap = {};
+    let lastEditorRange = null;
+
+    function switchTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('gsgw_editor_theme', theme);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('gsgw_editor_theme') || 'nightfall';
+      switchTheme(savedTheme);
+      document.getElementById('themeSelect').value = savedTheme;
+
+      editor = document.getElementById('editor');
+
+      // Make Enter create <p> instead of <div>; format with tags not inline styles
+      try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
+      try { document.execCommand('styleWithCSS', false, false); } catch (e) {}
+
+      editor.addEventListener('input', () => {
+        if (!isLoadingChapter) {
+          unsavedChanges = true;
+          updateStatus();
+        }
+      });
+      editor.addEventListener('keyup', updateToolbarState);
+      editor.addEventListener('mouseup', updateToolbarState);
+
+      // Remember the editor's selection so toolbar inputs can restore it
+      document.addEventListener('selectionchange', () => {
+        const sel = window.getSelection();
+        if (sel.rangeCount && editor.contains(sel.anchorNode)) {
+          lastEditorRange = sel.getRangeAt(0).cloneRange();
+        }
+      });
+
+      // Toolbar wiring
+      document.getElementById('toolbar').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-cmd]');
+        if (!btn) return;
+        e.preventDefault();
+        runCommand(btn.dataset.cmd);
+      });
+      document.getElementById('colorPicker').addEventListener('input', (e) => {
+        document.getElementById('colorHex').value = e.target.value;
+        applyColor(e.target.value);
+      });
+      const colorHex = document.getElementById('colorHex');
+      colorHex.addEventListener('change', () => {
+        let v = colorHex.value.trim();
+        if (!v.startsWith('#')) v = '#' + v;
+        if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v)) {
+          colorHex.value = v;
+          document.getElementById('colorPicker').value = v.length === 4
+            ? '#' + v.slice(1).split('').map(c => c + c).join('') : v;
+          applyColor(v);
+        } else {
+          showToast('Invalid hex color', 'error');
+        }
+      });
+      document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
+        if (e.target.value) applyFontSize(e.target.value);
+        e.target.value = '';
+      });
+
+      document.getElementById('metaTitle').addEventListener('change', () => {
+        if (!isLoadingChapter) unsavedChanges = true;
+        updateStatus();
+      });
+      document.getElementById('metaNumber').addEventListener('change', () => {
+        if (!isLoadingChapter) unsavedChanges = true;
+        updateStatus();
+      });
+
+      const pwd = localStorage.getItem('gsgw_editor_token');
+      if (pwd) {
+        sessionToken = pwd;
+        initializeEditor();
+      }
+    });
+
+    // ---- formatting commands -------------------------------------------------
+    function restoreRange() {
+      if (lastEditorRange) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(lastEditorRange);
+      }
+    }
+
+    function runCommand(cmd) {
+      editor.focus();
+      restoreRange();
+      switch (cmd) {
+        case 'bold': document.execCommand('bold'); break;
+        case 'italic': document.execCommand('italic'); break;
+        case 'clearColor': document.execCommand('removeFormat'); break;
+        case 'left': setBlockAlign(null); break;
+        case 'center': setBlockAlign('center'); break;
+        case 'right': setBlockAlign('right'); break;
+        case 'sceneBreak': insertSceneBreak(); break;
+      }
+      markChanged();
+      updateToolbarState();
+    }
+
+    function applyColor(hex) {
+      editor.focus();
+      restoreRange();
+      try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
+      document.execCommand('foreColor', false, hex);
+      try { document.execCommand('styleWithCSS', false, false); } catch (e) {}
+      markChanged();
+    }
+
+    function applyFontSize(size) {
+      editor.focus();
+      restoreRange();
+      const sel = window.getSelection();
+      if (!sel.rangeCount || sel.isCollapsed) return;
+      const range = sel.getRangeAt(0);
+      const span = document.createElement('span');
+      span.style.fontSize = size;
+      try {
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        sel.removeAllRanges();
+        const r = document.createRange();
+        r.selectNodeContents(span);
+        sel.addRange(r);
+      } catch (e) { /* selection crossed elements; ignore */ }
+      markChanged();
+    }
+
+    // Set/remove alignment class on the paragraph(s) in the selection
+    function setBlockAlign(align) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      let node = sel.getRangeAt(0).startContainer;
+      // Walk up to the block-level <p> (or other top-level child of #editor)
+      while (node && node !== editor) {
+        if (node.nodeType === 1 && node.parentNode === editor) break;
+        node = node.parentNode;
+      }
+      if (!node || node === editor) return;
+      node.classList.remove('center', 'right');
+      if (align) node.classList.add(align);
+    }
+
+    function insertSceneBreak() {
+      const hr = document.createElement('hr');
+      hr.className = 'sb';
+      const sel = window.getSelection();
+      if (sel.rangeCount) {
+        const range = sel.getRangeAt(0);
+        range.collapse(false);
+        range.insertNode(hr);
+        // move cursor after the hr
+        range.setStartAfter(hr);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } else {
+        editor.appendChild(hr);
+      }
+    }
+
+    function updateToolbarState() {
+      try {
+        setActive('bold', document.queryCommandState('bold'));
+        setActive('italic', document.queryCommandState('italic'));
+      } catch (e) {}
+    }
+    function setActive(cmd, on) {
+      const btn = document.querySelector(`.toolbar button[data-cmd="${cmd}"]`);
+      if (btn) btn.classList.toggle('active', !!on);
+    }
+
+    function markChanged() {
+      if (!isLoadingChapter) {
+        unsavedChanges = true;
+        updateStatus();
+      }
+    }
+
+    // Re-encode typographic characters back to the entities the source uses
+    function reencodeEntities(html) {
+      // Named entities the source uses — keep these so those lines stay byte-identical to git
+      const NAMED = {
+        0x0022:'quot', 0x0027:'#39', 0x00A0:'nbsp', 0x00B7:'middot',
+        0x00E0:'agrave', 0x00E8:'egrave', 0x00E9:'eacute',
+        0x2013:'ndash', 0x2014:'mdash', 0x2018:'lsquo', 0x2019:'rsquo',
+        0x201C:'ldquo', 0x201D:'rdquo', 0x2022:'bull', 0x2026:'hellip',
+        0x2190:'larr', 0x2191:'uarr', 0x2192:'rarr', 0x2193:'darr'
+      };
+      const parts = html.split(/(<[^>]*>)/);
+      return parts.map((part, i) => {
+        if (i % 2 === 1) return part; // inside a tag — leave attributes alone
+        let out = '';
+        for (const ch of part) {            // iterates by code point (handles emoji)
+          const cp = ch.codePointAt(0);
+          if (NAMED[cp]) out += '&' + NAMED[cp] + ';';
+          else if (cp > 127) out += '&#' + cp + ';';  // catch-all: any other non-ASCII
+          else out += ch;
+        }
+        return out;
+      }).join('');
+    }
+
+    // Turn the contenteditable DOM into the site's canonical HTML:
+    // one <p> (or <hr class="sb">) per line, <strong>/<em> tags, source entities.
+    function normalizeOutput(rawHtml) {
+      const temp = document.createElement('div');
+      temp.innerHTML = rawHtml
+        .replace(/<b>/g, '<strong>').replace(/<\/b>/g, '</strong>')
+        .replace(/<i>/g, '<em>').replace(/<\/i>/g, '</em>');
+
+      // Chapters never use <br>; strip the ones contenteditable injects
+      temp.querySelectorAll('br').forEach(br => br.remove());
+
+      // Trim only ASCII whitespace — NEVER nbsp ( ), which is meaningful
+      // content here (413 source paragraphs are <p>&nbsp;</p> spacers, 1313 lead with it).
+      const asciiTrim = (s) => s.replace(/^[ \t\r\n]+/, '').replace(/[ \t\r\n]+$/, '');
+      // "Empty" = no content once ASCII whitespace is removed; nbsp counts as content.
+      const isEmpty = (s) => s.replace(/[ \t\r\n]+/g, '').length === 0;
+
+      const out = [];
+      for (const node of temp.childNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.tagName === 'HR') { out.push('<hr class="sb">'); continue; }
+          if (isEmpty(node.textContent)) continue; // drop only truly-empty blocks
+          const inner = asciiTrim(node.innerHTML);
+          let cls = '';
+          if (node.classList.contains('center')) cls = ' class="center"';
+          else if (node.classList.contains('right')) cls = ' class="right"';
+          out.push(`<p${cls}>${inner}</p>`);
+        } else if (node.nodeType === Node.TEXT_NODE) {
+          if (!isEmpty(node.textContent)) out.push(`<p>${asciiTrim(node.textContent)}</p>`);
+        }
+      }
+      return reencodeEntities(out.join('\n'));
+    }
+
+    // ---- auth + app shell ----------------------------------------------------
+    async function authenticate() {
+      const password = document.getElementById('passwordInput').value;
+      try {
+        const res = await fetch(API_BASE + '/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        if (!res.ok) throw new Error('Invalid password');
+        const data = await res.json();
+        sessionToken = data.token;
+        localStorage.setItem('gsgw_editor_token', sessionToken);
+        initializeEditor();
+      } catch (e) {
+        showToast('Authentication failed: ' + e.message, 'error');
+      }
+    }
+
+    async function initializeEditor() {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('editorContainer').classList.remove('hidden');
+      document.getElementById('status').textContent = 'GSGW Chapter Editor';
+      draftPRMap = {};
+      await loadChaptersList();
+      await loadDraftPRs();
+    }
+
+    async function loadDraftPRs() {
+      try {
+        draftPRMap = await fetchAPI('/api/draft-prs');
+        updateChapterBadges();
+      } catch (e) {
+        draftPRMap = {};
+        updateChapterBadges();
+      }
+    }
+
+    function showModal(title, message, onConfirm) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      pendingModalAction = onConfirm;
+      document.getElementById('confirmModal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('confirmModal').classList.add('hidden');
+      pendingModalAction = null;
+    }
+    function confirmModal() {
+      if (pendingModalAction) pendingModalAction();
+      closeModal();
+    }
+
+    async function fetchAPI(path, options = {}) {
+      const headers = { ...options.headers, 'Authorization': 'Bearer ' + sessionToken };
+      const res = await fetch(API_BASE + path, { ...options, headers });
+      if (!res.ok) {
+        const text = await res.text();
+        const msg = text ? (text.startsWith('{') ? JSON.parse(text).error || text : text) : res.statusText;
+        throw new Error('API error: ' + msg);
+      }
+      return res.json();
+    }
+
+    let committedChapters = new Set();
+    let draftChapterSet = new Set();
+    // KV list() is eventually consistent, so a just-added draft may not appear in
+    // /api/chapter-drafts yet (and a just-discarded one may still appear). Track both
+    // locally so the sidebar reflects the action immediately.
+    let locallyAddedChapters = new Set();
+    let locallyDiscardedChapters = new Set();
+
+    async function loadChaptersList() {
+      try {
+        const committed = await fetchAPI('/api/chapters');
+        committedChapters = new Set(committed);
+        // Merge in chapters that exist only as drafts (e.g. newly added, not yet committed)
+        let draftChapters = [];
+        try { draftChapters = Object.keys(await fetchAPI('/api/chapter-drafts') || {}); } catch (e) {}
+        locallyAddedChapters.forEach(ch => draftChapters.push(ch));
+        draftChapters = draftChapters.filter(ch => !locallyDiscardedChapters.has(ch));
+        draftChapterSet = new Set(draftChapters);
+        const all = [...new Set([...committed, ...draftChapters])]
+          .sort((a, b) => parseInt(a.slice(2)) - parseInt(b.slice(2)));
+
+        const list = document.getElementById('chapterList');
+        list.innerHTML = '';
+        all.forEach(ch => {
+          const li = document.createElement('li');
+          li.textContent = ch;
+          li.dataset.chapter = ch;
+          li.onclick = () => selectChapter(ch);
+          list.appendChild(li);
+        });
+        updateChapterBadges();
+      } catch (e) {
+        showToast('Failed to load chapters: ' + e.message, 'error');
+      }
+    }
+
+    function promptNewChapter() {
+      document.getElementById('newChNumber').value = '';
+      document.getElementById('newChTitle').value = '';
+      document.getElementById('newChapterModal').classList.remove('hidden');
+      document.getElementById('newChNumber').focus();
+    }
+
+    function closeNewChapterModal() {
+      document.getElementById('newChapterModal').classList.add('hidden');
+    }
+
+    async function createNewChapter() {
+      const num = document.getElementById('newChNumber').value.trim();
+      const title = document.getElementById('newChTitle').value.trim() || ('Chapter ' + num);
+      if (!/^\d+$/.test(num)) return showToast('Chapter number must be digits only', 'error');
+      const ch = 'ch' + num;
+      if (committedChapters.has(ch) || document.querySelector(`.chapter-list li[data-chapter="${ch}"]`)) {
+        return showToast('Chapter ' + num + ' already exists', 'error');
+      }
+      try {
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        // Seed a draft so the chapter exists; createPR will write chapters/<num>.html
+        await fetchAPI('/api/save/' + ch, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html: '<p></p>', metadata: { number: num, title } })
+        });
+        locallyAddedChapters.add(ch);
+        locallyDiscardedChapters.delete(ch);
+        closeNewChapterModal();
+        unsavedChanges = false;
+        await loadChaptersList();
+        await loadChapterContent(ch);
+        showToast('Chapter ' + num + ' created — start writing, then Save');
+      } catch (e) {
+        showToast('Failed to create chapter: ' + e.message, 'error');
+      } finally {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      }
+    }
+
+    function updateChapterBadges() {
+      document.querySelectorAll('.chapter-list li').forEach(li => {
+        const ch = li.dataset.chapter;
+        const hasPR = draftPRMap[ch];
+        const oldBadge = li.querySelector('span');
+        if (oldBadge) oldBadge.remove();
+        const badge = document.createElement('span');
+        badge.style.cssText = 'position: absolute; right: 0.5rem; font-size: 0.7rem; color: white; padding: 0.2rem 0.5rem; border-radius: 2px;';
+        if (hasPR) {
+          badge.style.background = 'var(--accent)';
+          badge.textContent = 'PR';
+          badge.title = hasPR.pr_title;
+          li.appendChild(badge);
+        } else if (!committedChapters.has(ch)) {
+          // exists only as a draft → newly added, not yet committed
+          badge.style.background = '#2ea043';
+          badge.textContent = 'NEW';
+          badge.title = 'Unpublished — will be created on next PR';
+          li.appendChild(badge);
+        } else if (draftChapterSet.has(ch)) {
+          // committed chapter with a saved draft, not yet in a PR
+          badge.style.background = '#d29922';
+          badge.textContent = 'EDITED';
+          badge.title = 'Saved local changes — not yet in a PR';
+          li.appendChild(badge);
+        }
+      });
+    }
+
+    function revertChapter() {
+      if (!currentChapter) return showToast('No chapter selected', 'error');
+      const ch = currentChapter;
+      const draftOnly = !committedChapters.has(ch) && !draftPRMap[ch]; // a new, never-committed chapter
+      const msg = draftOnly
+        ? 'Discard the new chapter ' + ch + '? It exists only as an unsaved draft and will be removed entirely.'
+        : 'Discard all saved local changes for ' + ch + ' and reload from the published source? This cannot be undone.';
+      showModal('Revert Changes', msg, async () => {
+        try {
+          document.getElementById('loadingOverlay').classList.remove('hidden');
+          await fetchAPI('/api/discard/' + ch, { method: 'POST' });
+          locallyAddedChapters.delete(ch);
+          locallyDiscardedChapters.add(ch);
+          unsavedChanges = false;
+          await loadChaptersList();
+          await loadDraftPRs();
+          if (draftOnly) {
+            currentChapter = null;
+            editor.innerHTML = '';
+            document.getElementById('chapterTitle').textContent = 'GSGW Chapter Editor';
+            document.getElementById('metaTitle').value = '';
+            document.getElementById('metaNumber').value = '';
+            document.getElementById('publishedDate').textContent = '—';
+            document.getElementById('prBtn').textContent = 'Create PR';
+            showToast('New chapter ' + ch + ' discarded');
+          } else {
+            await loadChapterContent(ch);
+            showToast('Reverted ' + ch + ' to published source');
+          }
+        } catch (e) {
+          showToast('Failed to revert: ' + e.message, 'error');
+        } finally {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+      });
+    }
+
+    async function selectChapter(ch) {
+      if (unsavedChanges) {
+        showModal('Unsaved Changes', 'You have unsaved changes. Discard them?', () => loadChapterContent(ch));
+        return;
+      }
+      await loadChapterContent(ch);
+    }
+
+    async function loadChapterContent(ch) {
+      try {
+        currentChapter = ch;
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+
+        // Always fetch fresh: server decides PR -> saved draft -> main
+        const data = await fetchAPI('/api/chapter/' + ch);
+
+        currentChapterMetadata = data.metadata || {};
+        document.getElementById('metaTitle').value = data.title || '';
+        document.getElementById('metaNumber').value = data.number || '';
+
+        originalChapterHtml = data.html;
+        isLoadingChapter = true;
+        editor.innerHTML = data.html;
+        unsavedChanges = false;
+        lastSaveTime = new Date();
+        updateStatus();
+        document.getElementById('chapterTitle').textContent = data.title || ch;
+
+        setTimeout(() => { isLoadingChapter = false; }, 100);
+
+        document.querySelectorAll('.chapter-list li').forEach(li => {
+          li.classList.remove('active');
+          if (li.dataset.chapter === ch) li.classList.add('active');
+        });
+
+        const pubDateEl = document.getElementById('publishedDate');
+        if (data.hasPR) {
+          pubDateEl.textContent = '📝 Open PR (changes pending)';
+          document.getElementById('prBtn').textContent = 'Update PR';
+        } else {
+          document.getElementById('prBtn').textContent = 'Create PR';
+          if (data.hasDraft) {
+            pubDateEl.textContent = '💾 Unpublished saved draft';
+          } else if (data.publishedDate) {
+            const date = new Date(data.publishedDate);
+            pubDateEl.textContent = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+          } else {
+            pubDateEl.textContent = '—';
+          }
+        }
+      } catch (e) {
+        showToast('Failed to load chapter: ' + e.message, 'error');
+      } finally {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      }
+    }
+
+    async function saveChapter() {
+      if (!currentChapter) return showToast('No chapter selected', 'error');
+      try {
+        const html = normalizeOutput(editor.innerHTML);
+
+        const metadata = {
+          ...currentChapterMetadata,
+          title: document.getElementById('metaTitle').value || currentChapterMetadata.title,
+          number: document.getElementById('metaNumber').value || currentChapterMetadata.number
+        };
+
+        await fetchAPI('/api/save/' + currentChapter, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html, metadata })
+        });
+
+        originalChapterHtml = html;
+        currentChapterMetadata = metadata;
+        unsavedChanges = false;
+        lastSaveTime = new Date();
+        // This chapter now has a saved draft again — reflect it in the sidebar
+        locallyDiscardedChapters.delete(currentChapter);
+        draftChapterSet.add(currentChapter);
+        updateChapterBadges();
+        updateStatus();
+        showToast('Saved!');
+      } catch (e) {
+        showToast('Save failed: ' + e.message, 'error');
+      }
+    }
+
+    async function createPR(event) {
+      if (isCreatingPR) return;
+      const debugMode = event && event.shiftKey;
+
+      if (unsavedChanges && currentChapter) {
+        await saveChapter();
+      }
+
+      draftPRMap = await fetchAPI('/api/draft-prs');
+      const drafts = await fetchAPI('/api/chapter-drafts');
+      const chaptersWithPRs = Object.keys(drafts || {}).filter(ch => draftPRMap[ch]);
+
+      let message = 'Create a PR with all accumulated draft changes?';
+      if (chaptersWithPRs.length > 0) {
+        message = `Push changes to existing PR for ${chaptersWithPRs.join(', ')} and create new PR for others?`;
+      }
+      if (debugMode) {
+        message += '\n\n[DEBUG MODE — download HTML files instead of creating a PR]';
+      }
+
+      showModal('Create/Push PR', message, async () => {
+        try {
+          isCreatingPR = true;
+          document.querySelector('.create-pr-btn').disabled = true;
+          document.getElementById('loadingOverlay').classList.remove('hidden');
+
+          if (debugMode) {
+            const dr = await fetchAPI('/api/chapter-drafts');
+            for (const [ch, d] of Object.entries(dr || {})) {
+              const html = d.html || d;
+              const num = ch.replace('ch', '');
+              console.log(`=== ${num}.html ===\n` + html);
+              downloadFile(html, num + '.html');
+            }
+            showToast('DEBUG: HTML downloaded + logged to console');
+          } else {
+            const res = await fetchAPI('/api/create-pr', { method: 'POST' });
+            showToast('PR created/updated: ' + res.pr_url);
+            await loadDraftPRs();
+            await loadChaptersList();
+            if (currentChapter) await loadChapterContent(currentChapter);
+          }
+        } catch (e) {
+          showToast('Failed to create PR: ' + e.message, 'error');
+        } finally {
+          isCreatingPR = false;
+          document.querySelector('.create-pr-btn').disabled = false;
+          document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+      });
+    }
+
+    function downloadFile(content, filename) {
+      const blob = new Blob([content], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function updateStatus() {
+      const status = document.getElementById('status');
+      if (lastSaveTime) {
+        const time = lastSaveTime.toLocaleTimeString();
+        status.textContent = unsavedChanges ? 'Unsaved changes' : 'Saved at ' + time;
+      }
+    }
+
+    function showToast(msg, type = 'info', duration = 3000) {
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), duration);
+    }
+
+    window.addEventListener('beforeunload', (e) => {
+      if (unsavedChanges) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    setInterval(() => {
+      if (unsavedChanges && currentChapter) saveChapter();
+    }, 5 * 60 * 1000);
+  </script>
+</body>
+</html>

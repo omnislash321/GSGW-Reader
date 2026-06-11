@@ -1,59 +1,93 @@
-# gsgw-counts — per-paragraph comment-count Worker
+# gsgw-counts + Chapter Editor — Cloudflare Worker
 
-A tiny Cloudflare Worker that serves per-paragraph comment counts for the reader, so each
-paragraph can show an always-visible badge without loading a giscus iframe per paragraph.
+A Cloudflare Worker serving two functions:
+1. **Comment counts** — per-paragraph comment counts cached at the edge (public, read-only)
+2. **Chapter Editor** — password-protected web editor for formatting/updating chapters
 
-It reads the counts straight from GitHub Discussions (where giscus stores the comments) via
-the GraphQL API and caches the result at the edge for ~2 minutes. **No database, no webhook,
-no cron** — so there's nothing to hit a KV write limit, and deleted comments drop off on the
-next refresh. The reader who posts a comment sees their own badge update instantly client-side
-(via giscus's `emit-metadata` message); everyone else picks it up within the cache TTL.
+## Endpoints
 
-## Endpoint
-
+### Comment counts (public)
 ```
 GET /counts?ch=ch222  ->  { "ch222-p5": 3, "ch222-p12": 1 }
 ```
 
-Only paragraphs that have at least one comment appear in the map.
+### Chapter editor
+```
+GET /editor                    -> HTML page (password form, editor UI)
+POST /api/auth                 -> authenticate with password
+GET /api/chapters              -> list of all chapter slugs
+GET /api/chapter/ch222         -> fetch chapter content + metadata
+POST /api/save/ch222           -> save draft to KV
+POST /api/create-pr            -> create GitHub PR with all accumulated changes, clear KV
+```
 
-## Deploy
+## Setup & Deploy
 
-1. **Install wrangler & log in**
-   ```sh
-   npm i -g wrangler
-   wrangler login
-   ```
+### 1. Log in to Cloudflare
+```sh
+npm i -g wrangler
+wrangler login
+```
 
-2. **Add a GitHub token as a secret** — a fine-grained PAT scoped to the `GSGW-Reader` repo
-   with **Discussions: Read-only** (classic `public_repo` also works for a public repo):
-   ```sh
-   cd worker
-   wrangler secret put GITHUB_TOKEN
-   ```
+### 2. Create KV namespace
+```sh
+cd worker
+wrangler kv:namespace create EDITOR_DRAFTS
+```
+This outputs a namespace ID like `xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`. Copy it.
 
-3. **Deploy**
-   ```sh
-   wrangler deploy
-   ```
-   Note the deployed URL, e.g. `https://gsgw-counts.<subdomain>.workers.dev`.
+### 3. Update wrangler.toml
+Edit `worker/wrangler.toml` and set the KV ID:
+```toml
+[[kv_namespaces]]
+binding = "EDITOR_DRAFTS"
+id = "paste_the_id_here"
+```
 
-4. **Point the site at it** — set `counts_api` in `site.json` to that URL + `/counts`:
-   ```json
-   "counts_api": "https://gsgw-counts.<subdomain>.workers.dev/counts"
-   ```
-   Rebuild (`node scripts/build.mjs`) and deploy the site. If `counts_api` is empty the reader
-   silently skips bulk counts and still shows the per-paragraph comments + the poster's own +1.
+### 4. Set secrets
+```sh
+wrangler secret put EDITOR_PASSWORD
+# (paste the password for the editor, e.g. "correct-horse-battery-staple")
 
-## Config (`wrangler.toml`)
+wrangler secret put GITHUB_TOKEN
+# (paste your GitHub PAT with repo + pull request write access)
+```
 
-- `GITHUB_REPO` — `owner/name` of the repo holding the discussions.
-- `GITHUB_CATEGORY` — only count discussions in this category (matches giscus's category).
-- `GITHUB_TOKEN` — **secret**, set via `wrangler secret put` (never commit it).
+**Note:** If `GITHUB_TOKEN` is already set (from the counts setup), you can skip re-entering it.
 
-## Tuning
+### 5. Deploy
+```sh
+wrangler deploy
+```
 
-- Edge cache TTL is `TTL` in `src/index.js` (default 120s). Lower = fresher counts, more
-  GitHub calls; higher = the opposite.
-- The reader also caches a chapter's counts in `localStorage` and only re-fetches when that
-  cache is older than 60s, so repeat visits / back-button don't call the Worker at all.
+### 6. Update site.json (optional)
+If you want to link to the editor from the site, add:
+```json
+"editor_url": "https://gsgw-counts.<subdomain>.workers.dev/editor"
+```
+
+## Config (wrangler.toml)
+
+- `GITHUB_REPO` — `owner/name` of the repo holding chapters and discussions
+- `GITHUB_CATEGORY` — only count discussions in this category (matches giscus)
+- `GITHUB_TOKEN` — **secret**, set via `wrangler secret put`
+- `EDITOR_PASSWORD` — **secret**, set via `wrangler secret put`
+- `EDITOR_DRAFTS` — KV namespace binding for saving chapter drafts
+
+## Editor workflow
+
+1. Open `/editor` → enter password
+2. Select a chapter from the list
+3. Edit the HTML in the left pane (with Quill RTE toolbar)
+4. Preview updates in real-time on the right
+5. Click "Save" to save the draft to KV (or it auto-saves every 5 minutes)
+6. Edit other chapters freely
+7. When done, click "Create PR" → Worker creates a GitHub PR with all changes
+8. KV drafts are cleared after PR is created
+
+## Notes
+
+- Session tokens expire after 24 hours
+- Drafts persist in KV even if the editor closes/refreshes
+- Editor can swap between chapters without losing unsaved changes (with a confirmation)
+- The "Create PR" button requires a valid GitHub token with write access to the repo

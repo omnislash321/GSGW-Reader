@@ -143,6 +143,14 @@ function build() {
   rmSync(ASSETS_OUT, { recursive: true, force: true });   // copy css/js/img into the output
   cpSync(ASSETS_SRC, ASSETS_OUT, { recursive: true });
 
+  // Copy editor.html
+  const editorPath = join(ROOT, "editor.html");
+  try {
+    cpSync(editorPath, join(OUT, "editor.html"));
+  } catch (e) {
+    // editor.html is optional
+  }
+
   const files = readdirSync(join(ROOT, "chapters"))
     .filter((f) => f.endsWith(".md") || f.endsWith(".html")).sort();
   const chapters = files.map((f) => {

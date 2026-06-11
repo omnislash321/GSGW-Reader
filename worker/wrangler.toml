@@ -2,7 +2,12 @@ name = "gsgw-counts"
 main = "src/index.js"
 compatibility_date = "2025-06-01"
 
-# Read-only public values. The GitHub token is a *secret* (see README), never put it here.
+# Read-only public values. Secrets go in env (see README).
 [vars]
 GITHUB_REPO = "omnislash321/GSGW-Reader"
 GITHUB_CATEGORY = "Comments"
+
+# KV namespace for editor drafts — set the ID below after creating with: wrangler kv namespace create EDITOR_DRAFTS
+[[kv_namespaces]]
+binding = "EDITOR_DRAFTS"
+id = "1dda7d6586674e9ebd73d29ec757af1e"
