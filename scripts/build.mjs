@@ -143,12 +143,13 @@ function build() {
   rmSync(ASSETS_OUT, { recursive: true, force: true });   // copy css/js/img into the output
   cpSync(ASSETS_SRC, ASSETS_OUT, { recursive: true });
 
-  // Copy editor.html
-  const editorPath = join(ROOT, "editor.html");
+  // Copy hand-authored standalone pages (e.g. pages/editor.html -> /editor.html) verbatim.
   try {
-    cpSync(editorPath, join(OUT, "editor.html"));
+    for (const f of readdirSync(join(ROOT, "pages")).filter((f) => f.endsWith(".html"))) {
+      cpSync(join(ROOT, "pages", f), join(OUT, f));
+    }
   } catch (e) {
-    // editor.html is optional
+    // pages/ is optional
   }
 
   const files = readdirSync(join(ROOT, "chapters"))

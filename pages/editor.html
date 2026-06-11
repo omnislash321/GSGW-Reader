@@ -39,7 +39,7 @@
     .auth-box button { width: 100%; padding: 0.75rem; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
     .auth-box button:hover { opacity: 0.9; }
 
-    .editor-container { display: flex; height: 100vh; }
+    .editor-container { display: flex; height: 100vh; height: 100dvh; }
     .editor-container.hidden { display: none; }
 
     .sidebar { width: 250px; background: var(--card); border-right: 1px solid var(--border); padding: 1rem; overflow-y: auto; }
@@ -54,8 +54,12 @@
 
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .header { background: var(--card); padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
-    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; gap: 0.75rem; }
+    .header-title { display: flex; align-items: flex-start; gap: 0.75rem; min-width: 0; }
+    .menu-toggle { display: none; background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: 4px; font-size: 1.1rem; line-height: 1; padding: 0.4rem 0.6rem; cursor: pointer; flex: none; }
+    .menu-toggle:hover { border-color: var(--accent); }
     .header h1 { font-size: 1.2rem; margin: 0; }
+    .sidebar-backdrop { display: none; }
     .header-meta { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; }
     .controls { display: flex; gap: 0.75rem; align-items: center; }
     .save-btn, .create-pr-btn { padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
@@ -124,6 +128,35 @@
     .modal-btn-primary:hover { opacity: 0.9; }
     .modal-btn-secondary { background: var(--border); color: var(--fg); }
     .modal-btn-secondary:hover { background: var(--border); opacity: 0.8; }
+
+    /* ---- mobile ---- */
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+
+      /* Sidebar becomes an off-canvas drawer */
+      .sidebar {
+        position: fixed; top: 0; left: 0; bottom: 0; z-index: 1100;
+        width: 80%; max-width: 280px;
+        transform: translateX(-100%); transition: transform 0.25s ease;
+        box-shadow: 2px 0 12px rgba(0,0,0,0.3);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-backdrop.open { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1050; }
+
+      .header { padding: 0.75rem 1rem; }
+      .header-top { flex-wrap: wrap; margin-bottom: 0.75rem; }
+      .header h1 { font-size: 1.05rem; }
+      .controls { flex-wrap: wrap; gap: 0.5rem; }
+      .controls .status { order: 5; flex-basis: 100%; }
+      .theme-select, .save-btn, .create-pr-btn { font-size: 0.85rem; padding: 0.45rem 0.7rem; }
+
+      .metadata-panel { grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
+
+      .toolbar { padding: 0.5rem 0.75rem; gap: 0.3rem; }
+      .toolbar label { display: none; }
+
+      #editor { padding: 1.25rem 1.1rem 5rem; }
+    }
   </style>
 </head>
 <body>
@@ -169,7 +202,8 @@
   </div>
 
   <div class="editor-container hidden" id="editorContainer">
-    <div class="sidebar">
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="sidebar">
       <h2 class="chapters-head">Chapters <button class="add-ch-btn" id="addChapterBtn" title="Add new chapter" onclick="promptNewChapter()">+</button></h2>
       <ul class="chapter-list" id="chapterList"></ul>
     </div>
@@ -177,9 +211,12 @@
     <div class="main">
       <div class="header">
         <div class="header-top">
-          <div>
-            <h1 id="chapterTitle">GSGW Chapter Editor</h1>
-            <div class="header-meta">Last published: <span id="publishedDate">—</span></div>
+          <div class="header-title">
+            <button class="menu-toggle" id="menuToggle" title="Chapters" onclick="toggleSidebar()" aria-label="Toggle chapter list">☰</button>
+            <div>
+              <h1 id="chapterTitle">GSGW Chapter Editor</h1>
+              <div class="header-meta">Last published: <span id="publishedDate">—</span></div>
+            </div>
           </div>
           <div class="controls">
             <select id="themeSelect" onchange="switchTheme(this.value)" class="theme-select">
@@ -258,6 +295,15 @@
     function switchTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('gsgw_editor_theme', theme);
+    }
+
+    function toggleSidebar() {
+      const open = document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarBackdrop').classList.toggle('open', open);
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarBackdrop').classList.remove('open');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -703,6 +749,7 @@
     }
 
     async function selectChapter(ch) {
+      closeSidebar();
       if (unsavedChanges) {
         showModal('Unsaved Changes', 'You have unsaved changes. Discard them?', () => loadChapterContent(ch));
         return;
