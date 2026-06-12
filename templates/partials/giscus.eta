@@ -1,0 +1,9 @@
+<section class="comments">
+  <h2>Discussion</h2>
+  <script src="https://giscus.app/client.js"
+    data-repo="<%= it.giscus.repo %>" data-repo-id="<%= it.giscus.repoId %>"
+    data-category="<%= it.giscus.category %>" data-category-id="<%= it.giscus.categoryId %>"
+    data-mapping="pathname" data-strict="1" data-reactions-enabled="1"
+    data-emit-metadata="0" data-input-position="top" data-theme="dark"
+    data-lang="en" crossorigin="anonymous" async></script>
+</section>

@@ -7,6 +7,15 @@
   "description": "An unofficial fan reader for Got Dropped Into A Ghost Story, Still Gotta Work (GSGW).",
   "site_url": "https://gsgw-reader.pages.dev",
   "counts_api": "https://gsgw-counts.omnislash321.workers.dev/counts",
+  "_comment_themes": "Theme [slug, label] pairs for the settings <select>; slugs must match [data-theme=…] blocks in assets/css/themes.css.",
+  "themes": [
+    ["nightfall", "Nightfall"],
+    ["charcoal", "Charcoal"],
+    ["ghost", "Ghost Story"],
+    ["office", "Office Hours"],
+    ["after-dark", "After Dark"],
+    ["daydream", "Daydream"]
+  ],
   "giscus": {
     "repo": "omnislash321/GSGW-Reader",
     "repoId": "R_kgDOS1PEgw",

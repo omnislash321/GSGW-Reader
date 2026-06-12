@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Chapter editor for GSGW Reader">
+  <title>Chapter Editor · GSGW Reader</title>
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/themes.css">
+  <link rel="stylesheet" href="/assets/css/editor.css">
+</head>
+<body>
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="modal hidden" id="confirmModal">
+    <div class="modal-box">
+      <h2 id="modalTitle">Confirm</h2>
+      <p id="modalMessage"></p>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-secondary" id="modalCancel">Cancel</button>
+        <button class="modal-btn modal-btn-primary" id="modalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="newChapterModal">
+    <div class="modal-box">
+      <h2>Add New Chapter</h2>
+      <div class="metadata-field" style="margin-bottom:1rem;">
+        <label for="newChNumber">Chapter number</label>
+        <input type="text" id="newChNumber" placeholder="e.g. 372" inputmode="numeric">
+      </div>
+      <div class="metadata-field" style="margin-bottom:1.5rem;">
+        <label for="newChTitle">Title</label>
+        <input type="text" id="newChTitle" placeholder="Chapter title (optional)">
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-secondary" id="newChCancel">Cancel</button>
+        <button class="modal-btn modal-btn-primary" id="newChCreate">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-box">
+      <h1>Chapter Editor</h1>
+      <input type="password" id="passwordInput" placeholder="Password" />
+      <button id="authEnter">Enter</button>
+    </div>
+  </div>
+
+  <div class="editor-container hidden" id="editorContainer">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <div class="sidebar" id="sidebar">
+      <h2 class="chapters-head">Chapters <button class="add-ch-btn" id="addChapterBtn" title="Add new chapter">+</button></h2>
+      <ul class="chapter-list" id="chapterList"></ul>
+    </div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-top">
+          <div class="header-title">
+            <button class="menu-toggle" id="menuToggle" title="Chapters" aria-label="Toggle chapter list">☰</button>
+            <div>
+              <h1 id="chapterTitle">GSGW Chapter Editor</h1>
+              <div class="header-meta">Last published: <span id="publishedDate">—</span></div>
+            </div>
+          </div>
+          <div class="controls">
+            <select id="themeSelect" class="theme-select"><% it.themes.forEach(function (t) { %><option value="<%= t[0] %>"><%= t[1] %></option><% }) %></select>
+            <span class="status" id="status">Not authenticated</span>
+            <button class="save-btn" id="saveBtn">Save</button>
+            <button class="save-btn" id="revertBtn" style="background:var(--border);color:var(--fg);" title="Discard saved local changes and reload from the published source">Revert</button>
+            <button class="create-pr-btn" id="prBtn">Create PR</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="metadata-panel">
+        <div class="metadata-field">
+          <label for="metaTitle">Title</label>
+          <input type="text" id="metaTitle" placeholder="Chapter title">
+        </div>
+        <div class="metadata-field">
+          <label for="metaNumber">Number</label>
+          <input type="text" id="metaNumber" placeholder="Chapter number">
+        </div>
+      </div>
+
+      <div class="toolbar" id="toolbar">
+        <button type="button" data-cmd="bold" title="Bold" style="font-weight:bold;">B</button>
+        <button type="button" data-cmd="italic" title="Italic" style="font-style:italic;">I</button>
+        <span class="divider"></span>
+        <label>Color</label>
+        <input type="color" id="colorPicker" title="Text color" value="#8a6cf0">
+        <input type="text" id="colorHex" title="Hex color" placeholder="#rrggbb" value="#8a6cf0" maxlength="7" style="width:6.5rem;font-family:monospace;">
+        <button type="button" data-cmd="clearColor" title="Remove color">⌫</button>
+        <span class="divider"></span>
+        <label>Size</label>
+        <select id="fontSizeSelect" title="Font size">
+          <option value="">—</option>
+          <option value="0.85em">Small</option>
+          <option value="1.15em">Large</option>
+          <option value="1.4em">XL</option>
+        </select>
+        <span class="divider"></span>
+        <button type="button" data-cmd="left" title="Align left">⯇</button>
+        <button type="button" data-cmd="center" title="Align center">≡</button>
+        <button type="button" data-cmd="right" title="Align right">⯈</button>
+        <span class="divider"></span>
+        <button type="button" data-cmd="sceneBreak" title="Scene break">⁂</button>
+      </div>
+
+      <div class="editor-scroll">
+        <div id="editor" contenteditable="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/editor/main.js"></script>
+</body>
+</html>

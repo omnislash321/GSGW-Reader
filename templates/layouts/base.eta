@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="nightfall">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><%~ it.title %></title>
+    <meta name="description" content="<%~ it.description %>">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/img/favicon.png">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <script>(function(){try{var t=localStorage.getItem('gsgw-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  </head>
+  <body>
+    <%~ it.content %>
+    <script type="module" src="/assets/js/reader/main.js"></script>
+  </body>
+</html>

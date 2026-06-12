@@ -1,0 +1,12 @@
+<main class="chapter" data-slug="<%= it.slug %>" data-num="<%~ it.numEsc %>" data-title="<%~ it.titleEsc %>">
+  <div class="page">
+    <header class="chead"><h1><%~ it.titleEsc %></h1></header>
+    <article class="cbody" id="cbody"><%~ it.bodyHtml %></article>
+  </div>
+  <%~ include("../partials/chapter-nav", it) %>
+  <% if (it.comments) { -%>
+  <%~ include("../partials/giscus-config", it) %>
+  <%~ include("../partials/giscus", it) %>
+  <% } -%>
+</main>
+<%~ include("../partials/actionbar", { chapters: true, comments: it.comments, themes: it.themes }) %>

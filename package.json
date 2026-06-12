@@ -6,9 +6,14 @@
     "build": "node scripts/build.mjs",
     "serve": "node scripts/build.mjs && npx serve website",
     "deploy": "wrangler deploy --config worker/wrangler.toml",
-    "preview": "wrangler dev --config worker/wrangler.toml"
+    "preview": "wrangler dev --config worker/wrangler.toml",
+    "format": "prettier --write \"scripts/**/*.{mjs,js}\" \"assets/js/**/*.js\" \"assets/css/*.css\" \"worker/src/**/*.js\" \"*.json\""
   },
   "devDependencies": {
+    "prettier": "^3.8.4",
     "wrangler": "^4.99.0"
+  },
+  "dependencies": {
+    "eta": "^4.6.0"
   }
 }

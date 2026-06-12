@@ -1,0 +1,7 @@
+<main class="splash">
+  <div class="card">
+    <h1>404</h1>
+    <p class="kicker">This case file is missing from the archive.</p>
+    <a class="cta" href="/">Return to the records</a>
+  </div>
+</main>
