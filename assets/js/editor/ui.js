@@ -1,9 +1,11 @@
 // Editor UI chrome: theme, sidebar drawer, the confirm + new-chapter modals, status line, toasts.
 import { state } from "./state.js";
 import { set } from "../shared/storage.js";
+import { applyThemeAssets } from "../shared/theme-assets.js";
 
 export function switchTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
+  applyThemeAssets(theme);
   set("gsgw_editor_theme", theme);
 }
 

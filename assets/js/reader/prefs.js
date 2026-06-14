@@ -2,6 +2,7 @@
 // applied as CSS variables. The settings panel's controls live here.
 import { root, get, set, del } from "./store.js";
 import { syncGiscus, resetGiscusSync } from "./giscus-sync.js";
+import { applyThemeAssets } from "../shared/theme-assets.js";
 
 var DEF = { theme: "nightfall", fs: 1.125, lh: 1.7 };
 var sel = document.getElementById("theme");
@@ -13,6 +14,7 @@ function applyText() {
 function loadPrefs() {
   var t = get("gsgw-theme", DEF.theme);
   root.setAttribute("data-theme", t);
+  applyThemeAssets(t);
   if (sel) sel.value = t;
   fs = parseFloat(get("gsgw-fs", DEF.fs));
   lh = parseFloat(get("gsgw-lh", DEF.lh));
@@ -23,6 +25,7 @@ loadPrefs();
 if (sel)
   sel.addEventListener("change", function () {
     root.setAttribute("data-theme", sel.value);
+    applyThemeAssets(sel.value);
     set("gsgw-theme", sel.value);
     resetGiscusSync();
     syncGiscus(); // push the new light/dark theme to any open giscus iframes
@@ -48,6 +51,7 @@ if (reset)
     del("gsgw-fs");
     del("gsgw-lh");
     root.setAttribute("data-theme", DEF.theme);
+    applyThemeAssets(DEF.theme);
     if (sel) sel.value = DEF.theme;
     fs = DEF.fs;
     lh = DEF.lh;

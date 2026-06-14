@@ -1,6 +1,6 @@
 <main class="splash">
   <div class="card">
-    <img class="cover" src="/assets/img/logo.png" alt="<%~ it.brandEsc %>">
+    <img class="cover" data-logo src="/assets/img/logo-dark.png" alt="<%~ it.brandEsc %>">
     <h1><%~ it.brandEsc %></h1>
     <blockquote class="disc">“<%~ it.taglineEsc %>”</blockquote>
     <div class="resume-slot" data-resume hidden></div>

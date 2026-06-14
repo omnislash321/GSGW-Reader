@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><%~ it.title %></title>
     <meta name="description" content="<%~ it.description %>">
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
-    <link rel="apple-touch-icon" href="/assets/img/favicon.png">
+    <link rel="icon" type="image/png" class="themed-icon" data-icon="favicon" href="/assets/img/favicon-light.png">
+    <link rel="apple-touch-icon" class="themed-icon" data-icon="favicon" href="/assets/img/favicon-light.png">
     <link rel="stylesheet" href="/assets/css/main.css">
-    <script>(function(){try{var t=localStorage.getItem('gsgw-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+    <script>(function(){try{var t=localStorage.getItem('gsgw-theme');if(t)document.documentElement.setAttribute('data-theme',t);var v=(t==='office'||t==='daydream')?'dark':'light';document.querySelectorAll('link.themed-icon').forEach(function(l){l.href='/assets/img/'+l.dataset.icon+'-'+v+'.png';});}catch(e){}})();</script>
   </head>
   <body>
     <%~ it.content %>
