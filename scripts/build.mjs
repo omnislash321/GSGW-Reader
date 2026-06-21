@@ -52,11 +52,15 @@ function tocHref(part) {
   return part ? `/toc-${part.slug}.html` : "/parts.html";
 }
 
+// recursive removes can intermittently hit ENOTEMPTY/EBUSY when another process (the dev
+// server, an editor, an indexer) briefly holds a handle in the dir — retry rather than fail.
+const RM = { recursive: true, force: true, maxRetries: 10, retryDelay: 50 };
+
 function build() {
-  rmSync(CHAPTERS_OUT, { recursive: true, force: true }); // clear stale pages
+  rmSync(CHAPTERS_OUT, RM); // clear stale pages
   mkdirSync(CHAPTERS_OUT, { recursive: true });
 
-  rmSync(ASSETS_OUT, { recursive: true, force: true }); // copy css/js/img into the output
+  rmSync(ASSETS_OUT, RM); // copy css/js/img into the output
   cpSync(ASSETS_SRC, ASSETS_OUT, { recursive: true });
 
   const comments = commentsOn();
@@ -178,4 +182,10 @@ function build() {
   );
 }
 
-build();
+export { build };
+
+// Run a one-shot build when invoked directly (`node scripts/build.mjs`), but not
+// when imported by the watcher (scripts/watch.mjs), which drives build() itself.
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  build();
+}
