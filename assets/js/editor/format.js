@@ -2,6 +2,7 @@
 // site's canonical HTML (one <p>/<hr class="sb"> per line, <strong>/<em>, source entities).
 import { state } from "./state.js";
 import { updateStatus } from "./ui.js";
+import { cleanInline } from "./gdocs.js";
 
 function restoreRange() {
   if (state.lastEditorRange) {
@@ -195,10 +196,16 @@ export function normalizeOutput(rawHtml) {
         continue;
       }
       if (isEmpty(node.textContent)) continue; // drop only truly-empty blocks
-      const inner = asciiTrim(node.innerHTML);
+      // cleanInline strips pasted Google Docs styling (font-family, 12pt sizes, #000000,
+      // docs-internal-guid <b> wrappers) down to the same canonical inline markup the
+      // importer produces, while keeping real color/em-size/bold/italic emphasis.
+      const inner = asciiTrim(cleanInline(node.innerHTML));
+      // Alignment lives in a class for editor-made paragraphs; a paste may carry it as an
+      // inline text-align style instead, so fall back to that.
+      const ta = (node.style && node.style.textAlign) || "";
       let cls = "";
-      if (node.classList.contains("center")) cls = ' class="center"';
-      else if (node.classList.contains("right")) cls = ' class="right"';
+      if (node.classList.contains("center") || ta === "center") cls = ' class="center"';
+      else if (node.classList.contains("right") || ta === "right") cls = ' class="right"';
       out.push(`<p${cls}>${inner}</p>`);
     } else if (node.nodeType === Node.TEXT_NODE) {
       if (!isEmpty(node.textContent)) out.push(`<p>${asciiTrim(node.textContent)}</p>`);

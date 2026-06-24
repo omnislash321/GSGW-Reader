@@ -18,6 +18,7 @@ import {
 } from "./ui.js";
 import { authenticate, initializeEditor } from "./api.js";
 import { saveChapter, revertChapter, createPR, createNewChapter } from "./chapters.js";
+import { cleanPaste } from "./gdocs.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const savedTheme = get("gsgw_editor_theme", "nightfall");
@@ -42,6 +43,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   state.editor.addEventListener("keyup", updateToolbarState);
   state.editor.addEventListener("mouseup", updateToolbarState);
+
+  // Clean pastes (esp. from Google Docs) into the site's canonical markup before they land
+  // in the editor — strips font-family/12pt/#000000/docs-internal-guid noise that would
+  // otherwise break dark mode and bloat the diff, while keeping real color/size/bold/italic.
+  state.editor.addEventListener("paste", (e) => {
+    const html = e.clipboardData && e.clipboardData.getData("text/html");
+    if (!html) return; // plain-text paste — let the browser insert it as-is
+    e.preventDefault();
+    const cleaned = cleanPaste(html);
+    if (cleaned) document.execCommand("insertHTML", false, cleaned);
+    if (!state.isLoadingChapter) {
+      state.unsavedChanges = true;
+      updateStatus();
+    }
+  });
 
   // Remember the editor's selection so toolbar inputs can restore it
   document.addEventListener("selectionchange", () => {
