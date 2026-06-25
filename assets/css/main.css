@@ -267,7 +267,11 @@ body.nav-open .ab-toggle .ico-close {
   font-family: var(--serif);
   font-size: var(--read-size);
   line-height: var(--read-lh);
-  overflow-wrap: break-word;
+  /* `anywhere` (not `break-word`): both wrap long unbroken strings AND collapse the
+     element's min-content width. The latter matters because <body> is a column flexbox,
+     so an oversized min-content (e.g. a 100-char run-on word) would force the whole page
+     wider than the viewport and make mobile Safari zoom the entire layout out. */
+  overflow-wrap: anywhere;
 }
 .cbody p {
   margin: 0 0 1.1em;
