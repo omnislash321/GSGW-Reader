@@ -10,6 +10,13 @@ body {
   margin: 0;
   padding: 0;
 }
+/* Disable mobile WebKit/Blink automatic text inflation, which boosts body-text
+   size per-page based on layout width — making font size appear to jump between
+   chapters. 100% (not none) keeps manual pinch-zoom available. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
   background: var(--bg);
   color: var(--fg);
