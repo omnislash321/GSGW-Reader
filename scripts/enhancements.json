@@ -38,31 +38,6 @@
       "to": "Please say your goodbyes. Kindly!"
     }
   ],
-  "23": [
-    { "type": "voice", "from": "B a d c h i l d", "to": "B a d c h i l d" },
-    { "type": "voice", "from": "B a d c h i l d", "to": "B a d c h i l d" },
-    { "type": "voice", "from": "Y o u", "to": "Y o u" },
-    { "type": "voice", "from": "I t i s y o u", "to": "I t i s y o u" },
-    {
-      "type": "voice",
-      "from": "Y o u a r e a g o o d c h i l d",
-      "to": "Y o u a r e a g o o d c h i l d"
-    },
-    { "type": "voice", "from": "G o o d c h i l d r e n", "to": "G e t p r e s e n t s" },
-    {
-      "type": "voice",
-      "from": "L e t ’ s k e e p p l a y i n g",
-      "to": "L e t ’ s k e e p p l a y i n g"
-    }
-  ],
-  "24": [
-    { "type": "voice", "from": "G O O D C H I L D", "to": "Y E S" },
-    { "type": "voice", "from": "P L A Y", "to": "M O R E" }
-  ],
-  "25": [
-    { "type": "voice", "from": "F R O M H E R E", "to": "T O H E R E" },
-    { "type": "voice", "from": "G O O D B O Y", "to": "G O O D B O Y" }
-  ],
   "30": [
     {
       "type": "chat",
@@ -111,23 +86,9 @@
       "type": "scroll",
       "from": "This exhibition is held free of charge for one hour with an open heart that adores art.",
       "to": "This exhibition is held free of charge for one hour with an open heart that adores art."
-    },
-    {
-      "type": "voice",
-      "from": "S T A R L I G H T T W I N K L E D E V E R Y W H E R E",
-      "to": "F I L L I N G E V E R Y I N C H O F T H E S Q U A R E W A L L S A N D S T A R I N G A T M E H U M A N G A Z E S ...."
     }
   ],
   "52": [{ "type": "scroll", "from": "Pleasant mealtime", "to": "Bon appétit" }],
-  "64": [
-    {
-      "type": "voice",
-      "from": "I t’ s a n e w t e a c h e r !",
-      "to": "I t’ s a n e w t e a c h e r !"
-    },
-    { "type": "voice", "from": "B E T R A Y E R", "to": "B E T R A Y E R" },
-    { "type": "voice", "from": "G o o d b y e !", "to": "G o o d b y e !" }
-  ],
   "80": [
     {
       "type": "note",
@@ -157,8 +118,72 @@
       "to": "We are waiting for sightings."
     }
   ],
+  "103": [
+    { "type": "note", "from": "Disciplinary Notice", "to": "This disciplinary measure is intended to improve the individual's work attitude. Please ensure that similar incidents do not occur in the future." }
+  ],
+  "104": [
+    { "type": "note", "from": "Night Cleaning Duty Tips", "to": "But don't worry too much. If you just read these sweet tips I’ve written down, you’ll be able to finish and get out without much trouble." }
+  ],
+  "108": [
+    { "type": "record", "from": "Imitator Scripture Section 4", "to": "Story Snatcher" }
+  ],
+  "111": [
+    { "type": "record", "from": "The Paradise Test (tentative name) is a phenomenon that occurs very rarely on the Iksan-bound high-speed railway departing from Seoul.", "to": "No casualties to date. Disaster classification pending." }
+  ],
+  "116": [
+    { "type": "note", "from": "Let’sEndureJustSevenTimes", "to": "Let’sEndureJustSevenTimes" }
+  ],
   "121": [
     { "type": "note", "from": "Mr. Kim Soleum", "to": ":)" },
     { "type": "note", "from": "Quiz Show Application Form", "to": "From :" }
+  ],
+  "162": [
+    { "type": "idcard", "from": "Children's Surprise Syrup", "to": "★★★★" }
+  ],
+  "165": [
+    { "type": "note", "from": "-Hongrim Unni, I really, really love you", "to": "-The great leader, our Team Leader" }
+  ],
+  "166": [
+    { "type": "idcard", "from": "I am a Cosmic shopping mall VIP!", "to": "~Gratitude Cell included~" },
+    { "type": "chat", "from": "-Is it okay to leave the Swamp Music Box alone when it’s not working?", "to": "-Recommend something for lunch." }
+  ],
+  "168": [
+    { "type": "chat", "from": "-Congrats congrats.", "to": "-Good job everyone~" }
+  ],
+  "169": [
+    { "type": "chat", "from": "-The King of Destruction rookie is adjusting smoothly ^^", "to": "-You’re in this chatroom too now, right?" }
+  ],
+  "172": [
+    { "type": "note", "from": "< Flower Golden Resort is a space for happiness. Please refrain from anything that makes other guests or staff uncomfortable.", "to": "The standard of happiness is determined by the Mascot. >" }
+  ],
+  "173": [
+    { "type": "note", "from": "Notice for Guest Lizard", "to": "We hope you enjoy all the cheerfulness of this resort." }
+  ],
+  "175": [
+    { "type": "note", "from": "What should we do", "to": "Sob sob sob sob sob" }
+  ],
+  "176": [
+    { "type": "note", "from": "<Requirements for Resort facility expansion>", "to": "Mascot Ceremony Ritual" }
+  ],
+  "178": [
+    { "type": "note", "from": "Come see Flower Golden", "to": "in ■■!" }
+  ],
+  "179": [
+    { "type": "note", "from": "Prize Event", "to": "3rd Prize: The Great Magic Bunny" }
+  ],
+  "184": [
+    { "type": "options", "from": "Free Choice", "to": "▶Go down" }
+  ],
+  "185": [
+    { "type": "options", "from": "Your choice", "to": "▶ Stay" }
+  ],
+  "186": [
+    { "type": "note", "from": "Exploration Results:", "to": "Additional Special Note 2) Many of the exploration staff who returned on the 6th day testified to working as theme park employees. They claimed to have received items from the gift shop as wages." }
+  ],
+  "188": [
+    { "type": "record", "from": "Mimic Scripture Verse 4", "to": "The item that appeared when the Sergeant defeated the Imitator I encountered while cleaning in the company basement after receiving disciplinary action." }
+  ],
+  "190": [
+    { "type": "chat", "from": "[Don't say anything unnecessary even if the King of Destruction rookie carries a doll keychain, it's a precious friend.]", "to": "[I'm the person who asked today if a younger sibling gave him that doll. If you're reading this, I'm sorry. Agent. ㅠㅠ]" }
   ]
 }

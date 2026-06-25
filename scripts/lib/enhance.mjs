@@ -99,7 +99,7 @@ function tagRange(lines, start, end, type) {
 
 // Every class this module assigns — used to stop two detectors fighting over one paragraph.
 const TAGGED =
-  /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record)\b/;
+  /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record|verticaltext)\b/;
 const isTagged = (line) => TAGGED.test(line);
 
 // Tag each maximal run of >=minLen consecutive, not-already-tagged paragraphs that satisfy
@@ -147,6 +147,21 @@ const isGaugeLine = (line) => {
   // bar chars: ∥ U+2225, ‖ U+2016, │ U+2502, | ; markers: ▲▼◀▶◆●○ ; plus dashes/equals.
   return /^[∥‖│|▲▼◀▶◆●○─━\-=\s]+$/.test(t) && /[∥‖│▲▼◀▶─━=-]/.test(t);
 };
+// Spaced-out "voice": the mascot/system speaking one letter at a time ("G O O D  B O Y",
+// "Y o u", "T h e m e P a r k", "I t ’ s  o k a y"). Signature: the whole paragraph is mostly
+// SINGLE-LETTER tokens. Counting only single-char ALPHANUMERIC tokens (≥2 of them, ≥70% of all
+// tokens) catches even short cries while excluding ordinary prose (real sentences always have
+// multi-char words), initialisms ("J. R. R."), and symbol runs like a "■ ■ ■" redaction.
+const isVoiceLine = (line) => {
+  const toks = plainText(line).split(" ").filter(Boolean);
+  if (toks.length < 2) return false;
+  const singleAlpha = toks.filter((w) => w.length === 1 && /[A-Za-z0-9]/.test(w)).length;
+  return singleAlpha >= 2 && singleAlpha >= toks.length * 0.7;
+};
+// Vertical text: a word spelled ONE letter per paragraph going down the page (ch118's
+// "B / U / R / N / I / N / G …"). Signature: a whole paragraph that is a single alphanumeric
+// character; tagged only in runs of 4+ so a stray one-letter line isn't swept up.
+const isVertChar = (line) => /^[A-Za-z0-9]$/.test(plainText(line));
 
 // Return the html with enhancement classes applied. `blocks` is enhancements.json[chapterNum]
 // (an array of { type, from, to }) or undefined. Unresolved anchors are skipped silently here;
@@ -242,7 +257,16 @@ export function enhance(html, blocks = []) {
     if (end > i) tagRange(lines, i, end, "panel");
   }
 
-  // 8. Hide the box-edge glyph lines that FRAME a styled box. A listed `scroll`/`lore` block is
+  // 8. Auto "voice": spaced-out mascot/system speech, one letter per token. Pervasive and
+  //    repetitive across the mascot arcs (ch177 alone has ~70 lines), so detecting the shape
+  //    beats hand-listing. minLen 1 — a lone spaced cry is still voice; consecutive lines group.
+  tagRuns(lines, isVoiceLine, "voice", 1);
+
+  // 9. Auto "verticaltext": a word spelled one letter per paragraph (≥4 consecutive single-char
+  //    paragraphs). Tight, centered styling makes the letters read as a vertical column.
+  tagRuns(lines, isVertChar, "verticaltext", 4);
+
+  // 10. Hide the box-edge glyph lines that FRAME a styled box. A listed `scroll`/`lore` block is
   //    anchored by its CONTENT, so the source's `+++` / `===` framing glyphs (below the 5+
   //    auto-lore threshold, or using `+`) survive as visible noise. Hide such a glyph line ONLY
   //    when it sits directly next to a box-tagged paragraph — so a stray, unrelated delimiter

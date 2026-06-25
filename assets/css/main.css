@@ -790,6 +790,24 @@ body.nav-open .ab-toggle .ico-close {
   margin-bottom: 1.7em;
 }
 
+/* Vertical text: a word spelled one letter per paragraph (auto: runs of 4+ single-char <p>).
+   Tight line-height stacks the letters into a centered column; red/bold reads as a scream. */
+.cbody > p.verticaltext {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.3em;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  margin: 0;
+  color: color-mix(in srgb, #c0392b 60%, var(--fg));
+}
+.cbody > p.verticaltext-top {
+  margin-top: 1.3em;
+}
+.cbody > p.verticaltext-bot {
+  margin-bottom: 1.3em;
+}
+
 /* Scroll / invitation (listed type "scroll", source frames it with +++): in-world "transformed
    text" — exhibition invitations, manual pages. An aged-parchment card in a formal serif. Fixed
    warm palette (like card/terminal) so it reads the same on every theme. The +++ glyph lines are
