@@ -176,6 +176,7 @@ function build() {
           chapters: tocChapters,
           partNameEsc: esc(part.name),
           epubHref: epubHref(part.slug),
+          countsApi: comments ? SITE.counts_api || "" : "",
           themes,
         },
         { title: `${part.name} · ${SITE.site_name}`, description: SITE.description },

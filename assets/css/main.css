@@ -1097,6 +1097,32 @@ body.nav-open .ab-toggle .ico-close {
 .chlist li.read a {
   color: var(--muted);
 }
+.toc-cc {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.6rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.toc-cc:not(.has) {
+  display: none;
+}
+.toc-cc.has {
+  color: var(--accent);
+}
+.toc-cc svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .ch-toggle {
   flex: 0 0 auto;
   margin-left: 0.6rem;
