@@ -1021,7 +1021,44 @@ body.nav-open .ab-toggle .ico-close {
   display: flex;
   align-items: center;
 }
-.chnav-top {
+/* In-flow navs above and below the chapter body (the classic top/bottom bars). */
+.chnav-inline-top,
+.chnav-inline-bot {
+  justify-content: space-between;
+  gap: 1rem;
+}
+.chnav-inline-top {
+  margin: 0 0 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.chnav-inline-bot {
+  margin: 2.5rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.chnav-inline-top a,
+.chnav-inline-bot a {
+  color: var(--fg);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+.chnav-inline-top a:hover,
+.chnav-inline-bot a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+.chnav-float {
+  transition:
+    opacity 0.2s,
+    visibility 0.2s,
+    transform 0.2s;
   position: fixed;
   left: 50%;
   top: calc(0.9rem + env(safe-area-inset-top));
@@ -1039,7 +1076,7 @@ body.nav-open .ab-toggle .ico-close {
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
-.chnav-top a {
+.chnav-float a {
   color: var(--fg);
   text-decoration: none;
   white-space: nowrap;
@@ -1047,7 +1084,7 @@ body.nav-open .ab-toggle .ico-close {
   border-radius: 999px;
   font-size: 0.9rem;
 }
-.chnav-top a:hover {
+.chnav-float a:hover {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--accent);
   text-decoration: none;
@@ -1066,11 +1103,15 @@ body.nav-open .ab-toggle .ico-close {
 .chnav-sel:hover {
   border-color: var(--accent);
 }
-/* Desktop: the floating pill is always visible, so push the chapter down to clear it. (On mobile
-   the pill is hidden behind the FAB, so the base top padding is fine.) */
+/* Desktop: the floating pill auto-hides whenever an in-flow nav is on screen (chapter start /
+   end), so the reader never sees two navs at once. chapter-nav.js toggles .chnav-hidden via an
+   IntersectionObserver. (On mobile the pill is FAB-gated, so this never applies there.) */
 @media (min-width: 681px) {
-  .chapter {
-    padding-top: 4.6rem;
+  .chnav-float.chnav-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(-0.4rem);
   }
 }
 
@@ -1134,6 +1175,10 @@ body.nav-open .ab-toggle .ico-close {
   letter-spacing: 0.08em;
   white-space: nowrap;
   padding: 0.2rem 0.6rem;
+  /* Fixed width so "Read" / "NN%" / "Unread" are all the same size — keeps the comment badge
+     to its left aligned in a column across every row. */
+  min-width: 4.2rem;
+  text-align: center;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -1480,7 +1525,7 @@ body:has(.actionbar) .site-foot {
     transform: translateX(-50%);
   }
 
-  .chnav-top {
+  .chnav-float {
     position: fixed;
     left: 50%;
     top: calc(2rem + env(safe-area-inset-top));
@@ -1504,14 +1549,14 @@ body:has(.actionbar) .site-foot {
       transform 0.2s,
       visibility 0.2s;
   }
-  body.nav-open .chnav-top {
+  body.nav-open .chnav-float {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     transform: translateX(-50%);
   }
   /* compact, tidy prev/next inside the floating pill (not link-blue) */
-  .chnav-top a {
+  .chnav-float a {
     color: var(--fg);
     text-decoration: none;
     white-space: nowrap;
@@ -1519,10 +1564,10 @@ body:has(.actionbar) .site-foot {
     border-radius: 999px;
     font-size: 0.85rem;
   }
-  .chnav-top a:active {
+  .chnav-float a:active {
     background: color-mix(in srgb, var(--fg) 12%, transparent);
   }
-  .chnav-top .chnav-sel {
+  .chnav-float .chnav-sel {
     max-width: 42vw;
   }
 }
