@@ -1,4 +1,4 @@
-// Public comment-counts endpoint: a per-paragraph comment-count map, built from GitHub
+// Public counts endpoint: a per-paragraph map of (comments + reactions), built from GitHub
 // Discussions and cached at the edge so every reader shares one snapshot per colo.
 import { cors, json } from "./http.js";
 import { gql } from "./github.js";
@@ -47,7 +47,7 @@ async function buildAll(env) {
         repository(owner:$owner,name:$name){
           discussions(first:100,after:$after){
             pageInfo{ hasNextPage endCursor }
-            nodes{ title comments{ totalCount } category{ name } }
+            nodes{ title comments{ totalCount } reactions{ totalCount } category{ name } }
           }
         }
       }`,
@@ -57,8 +57,10 @@ async function buildAll(env) {
     for (const n of d.nodes) {
       if (env.GITHUB_CATEGORY && n.category && n.category.name !== env.GITHUB_CATEGORY) continue;
       if (!/-p\d+$/.test(n.title)) continue; // only per-paragraph term threads
-      if (n.comments.totalCount <= 0) continue;
-      (out[chapterOf(n.title)] ||= {})[n.title] = n.comments.totalCount;
+      // Badge counts comments (incl. replies) + reactions on the discussion body.
+      const total = n.comments.totalCount + (n.reactions ? n.reactions.totalCount : 0);
+      if (total <= 0) continue;
+      (out[chapterOf(n.title)] ||= {})[n.title] = total;
     }
     after = d.pageInfo.hasNextPage ? d.pageInfo.endCursor : null;
   } while (after);
