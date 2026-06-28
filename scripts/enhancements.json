@@ -16,6 +16,67 @@
     }
   ],
   "6": [{ "type": "note", "from": "-RUN AWAY", "to": "-RUN AWAY" }],
+  "7": [
+    {
+      "type": "pa",
+      "from": "-New employee full of dreams and passion! Welcome to Daydream Inc.'s Field Exploration Team!",
+      "to": "-Today, we're going to tell you in detail what wonderful work the Field Exploration Team does!"
+    },
+    { "type": "pa", "from": "-Before that!", "to": "-Before that!" },
+    {
+      "type": "pa",
+      "from": "-You think we only make hair loss pills? Oh my god! In fact, Daydream Inc. can create any medicine you need!",
+      "to": "-Literally a magic company that makes magic medicine!"
+    },
+    {
+      "type": "pa",
+      "from": "-However! For magic medicine, you need magic ingredients.",
+      "to": "-And that is… ‘Dream Essence’!"
+    },
+    {
+      "type": "pa",
+      "from": "-‘Dream Essence’ is harvested from supernatural phenomena!",
+      "to": "-‘Dream Essence’ is harvested from supernatural phenomena!"
+    },
+    {
+      "type": "pa",
+      "from": "-Did you know that supernatural phenomena occur even in modern society?",
+      "to": "-But sometimes, these urban legends manifest in reality!"
+    },
+    {
+      "type": "pa",
+      "from": "-Daydream Inc. manages these urban legends to collect ‘Dream Essence’ and create wonderful magic medicines that grant people's wishes!",
+      "to": "-Of course! We always need it… so, who will go and gather the ‘Dream Essence’?"
+    },
+    {
+      "type": "pa",
+      "from": "-It's the wonderful Field Exploration Team!",
+      "to": "-It's the wonderful Field Exploration Team!"
+    },
+    {
+      "type": "pa",
+      "from": "-Thanks to the efforts of the brave and wise Field Exploration Team, the Dream Collector is full again today!",
+      "to": "-Thanks to the efforts of the brave and wise Field Exploration Team, the Dream Collector is full again today!"
+    },
+    {
+      "type": "pa",
+      "from": "-Now, take your Dream Collector and bravely and wisely enter the Darkness!",
+      "to": "-The future of our company rests on your shoulders! Fighting!"
+    }
+  ],
+  "9": [
+    {
+      "type": "note",
+      "from": "[Section Chief Lee Jaheon / 105105301]",
+      "to": "PW: dydajflgodks!111"
+    },
+    {
+      "type": "terminal",
+      "from": "<Cosmic shopping mall>",
+      "to": "※Cool items from outer space※~!!"
+    }
+  ],
+  "10": [{ "type": "options", "from": "-Memorial Pop Socket", "to": "-Silver Coin Snake" }],
   "14": [
     {
       "type": "chat",
@@ -23,12 +84,28 @@
       "to": "-Is Kim Soleum the one who wore that weird mask with horns…?"
     }
   ],
+  "15": [{ "type": "note", "from": "※NEVER INPUT PLANTS", "to": "※NEVER INPUT PLANTS" }],
   "17": [{ "type": "chat", "from": "-I’m putting 10 on D.", "to": "-OK." }],
   "20": [
     {
-      "type": "note",
+      "type": "record",
       "from": "Testimony #4 (Survivor: Park Yae-in)",
       "to": "Later, plush dolls made by recycling the clothing and bones of said individuals were discovered in the souvenir shop. (Presumed deceased)"
+    },
+    {
+      "type": "pa",
+      "from": "—Meet the residents and stories of each zone in Fantasyland! A cheerful train ride!",
+      "to": "—Meet the residents and stories of each zone in Fantasyland! A cheerful train ride!"
+    },
+    {
+      "type": "pa",
+      "from": "—Haha, enjoy a wonderful train journey! Haha, enjoy a wonderful train journey! Haha, enjoy a wonderful train journey….",
+      "to": "—Haha, enjoy a wonderful train journey! Haha, enjoy a wonderful train journey! Haha, enjoy a wonderful train journey…."
+    },
+    {
+      "type": "pa",
+      "from": "—The Fantasy Train is departing!",
+      "to": "—The Fantasy Train is departing!"
     }
   ],
   "22": [
@@ -245,7 +322,7 @@
   "185": [{ "type": "options", "from": ">Your choice", "to": "▶ Stay" }],
   "186": [
     {
-      "type": "note",
+      "type": "record",
       "from": "Exploration Results:",
       "to": "Additional Special Note 2) Many of the exploration staff who returned on the 6th day testified to working as theme park employees. They claimed to have received items from the gift shop as wages."
     }

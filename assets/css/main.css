@@ -830,6 +830,26 @@ body.nav-open .ab-toggle .ico-close {
   margin-bottom: 1.7em;
 }
 
+/* PA / mascot announcement (listed type "pa"): a recorded tannoy or cheerful mascot/announcer
+   voice the source prefixes with an em-dash (training-video mascots, theme-park ride PA). A
+   NON-box amber caption (like `voice`, but normal-spaced and lower-case) so single interspersed
+   lines read as an overhead announcement without choppy borders. Listed, not auto: a bare `—`
+   prefix is far too common (ordinary dialogue + SFX) to detect safely book-wide. */
+.cbody > p.pa {
+  font-style: italic;
+  font-family: var(--ui);
+  color: color-mix(in srgb, #cda049 62%, var(--fg));
+  letter-spacing: 0.01em;
+  padding-left: 1.2em;
+  margin: 0.4em 0;
+}
+.cbody > p.pa-top {
+  margin-top: 1.5em;
+}
+.cbody > p.pa-bot {
+  margin-bottom: 1.5em;
+}
+
 /* Vertical text: a word spelled one letter per paragraph (auto: runs of 4+ single-char <p>).
    Tight line-height stacks the letters into a centered column; red/bold reads as a scream. */
 .cbody > p.verticaltext {

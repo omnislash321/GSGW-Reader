@@ -99,7 +99,7 @@ function tagRange(lines, start, end, type) {
 
 // Every class this module assigns — used to stop two detectors fighting over one paragraph.
 const TAGGED =
-  /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record|verticaltext)\b/;
+  /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record|verticaltext|pa)\b/;
 const isTagged = (line) => TAGGED.test(line);
 
 // Tag each maximal run of >=minLen consecutive, not-already-tagged paragraphs that satisfy
