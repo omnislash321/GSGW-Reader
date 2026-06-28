@@ -263,5 +263,84 @@
       "from": "[Don't say anything unnecessary even if the King of Destruction rookie carries a doll keychain, it's a precious friend.]",
       "to": "[I'm the person who asked today if a younger sibling gave him that doll. If you're reading this, I'm sorry. Agent. ㅠㅠ]"
     }
-  ]
+  ],
+  "191": [{ "type": "idcard", "from": "Children's Disguise Syrup", "to": "★★★★★" }],
+  "206": [
+    {
+      "type": "note",
+      "from": "Any tips for drinking the Wish Ticket?",
+      "to": "—From the advice of an assistant manager in Elite Squad C-Team."
+    }
+  ],
+  "271": [
+    {
+      "type": "record",
+      "from": "Exploration Record #114",
+      "to": "The Darkness was left unobserved. Upon visiting 7 weeks later, it had automatically repaired itself and was operational again."
+    }
+  ],
+  "274": [
+    {
+      "type": "idcard",
+      "from": "Indulge in an even more distant memory!",
+      "to": "<Fantasy Edition>"
+    }
+  ],
+  "276": [
+    {
+      "type": "note",
+      "from": "The escalator at Exit 2 is under construction. Please use another exit.",
+      "to": "Owner of lost cat wallet, please go to the station office"
+    }
+  ],
+  "285": [
+    {
+      "type": "record",
+      "from": "Noteworthy Items:",
+      "to": "-Depending on the outcome of this urgent situation, rumors are spreading that the suspended registration of the 'Golden Flower Mascot' as a supernatural being may be resumed."
+    }
+  ],
+  "287": [{ "type": "note", "from": "Progress Day ■■■", "to": "We must." }],
+  "310": [
+    {
+      "type": "note",
+      "from": "Something urgent came up that I need to check, so I'm going to the company for a bit.",
+      "to": "I've sent company researchers to Afternoon Station for the details, so you can hear about it when you meet them."
+    }
+  ],
+  "321": [
+    {
+      "type": "record",
+      "from": "Exploration Records #16",
+      "to": "Records of the patient appearing in said hospital room are below."
+    }
+  ],
+  "322": [
+    {
+      "type": "record",
+      "from": "Exploration Record #3",
+      "to": "Unconfirmed testimony that these entities made remarks as if celebrating or commemorating something."
+    },
+    {
+      "type": "record",
+      "from": "Exploration Record #21",
+      "to": "Confirmed to be an anomalous phenomenon caused by the absence of a terrace-like space that was originally on the 2nd-floor cafeteria of the sanatorium. The reenactment of the camcorder footage proceeded normally."
+    },
+    {
+      "type": "record",
+      "from": "Exploration Record #4",
+      "to": "※Access is prohibited for the supervising researchers and Field Investigation Team members. Please access this exploration record after receiving permission from the Guard Team."
+    }
+  ],
+  "334": [
+    { "type": "note", "from": "-Department store / Why did I wake up here?", "to": "-Silver Coin" }
+  ],
+  "364": [
+    {
+      "type": "record",
+      "from": "Exploration Record #??",
+      "to": "Attempted to standardize and use escape methods from similar types of ghost stories."
+    }
+  ],
+  "370": [{ "type": "idcard", "from": "Children's Paradise Syrup", "to": "★★★★★★★" }]
 }
