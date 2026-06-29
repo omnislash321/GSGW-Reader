@@ -151,6 +151,12 @@ body.nav-open .ab-toggle .ico-close {
   font: inherit;
   cursor: pointer;
 }
+.sp-row input[type="checkbox"] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
 .sp-grp {
   display: flex;
   gap: 0.3rem;
@@ -428,6 +434,18 @@ body.nav-open .ab-toggle .ico-close {
    math font); Spectral styles the ASCII characters in the span (brackets, spaces). */
 .cbody .f-title {
   font-family: "Spectral", Georgia, serif;
+}
+
+/* ---- Readable mode (settings toggle; set by reader/prefs.js as data-readable on <html>) ----
+   Accessibility option for readers who struggle with serif or script type: swap the serif
+   reading font for a clean system sans-serif and render every decorative/cursive span in that
+   same plain font. Pure CSS over already-loaded text — no extra webfont is fetched. */
+:root[data-readable="1"] .cbody {
+  font-family: var(--ui);
+}
+:root[data-readable="1"] .cbody :is(.f-script, .f-display, .f-hand, .f-chat, .f-notice, .f-title) {
+  font-family: var(--ui);
+  font-style: normal;
 }
 
 /* ---- footnotes / TL notes (build-time; see footnotes() in scripts/lib/enhance.mjs) ------

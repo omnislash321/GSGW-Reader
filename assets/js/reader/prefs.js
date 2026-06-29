@@ -4,12 +4,20 @@ import { root, get, set, del } from "./store.js";
 import { syncGiscus, resetGiscusSync } from "./giscus-sync.js";
 import { applyThemeAssets } from "../shared/theme-assets.js";
 
-var DEF = { theme: "nightfall", fs: 1.125, lh: 1.7 };
+var DEF = { theme: "nightfall", fs: 1.125, lh: 1.7, readable: false };
 var sel = document.getElementById("theme");
+var readableBox = document.getElementById("sp-readable");
 var fs, lh;
 function applyText() {
   root.style.setProperty("--read-size", fs + "rem");
   root.style.setProperty("--read-lh", lh);
+}
+// Accessible-fonts mode: a single data-readable flag CSS keys off (see main.css) to drop the
+// serif/decorative faces in favour of a plain system sans-serif.
+function applyReadable(on) {
+  if (on) root.setAttribute("data-readable", "1");
+  else root.removeAttribute("data-readable");
+  if (readableBox) readableBox.checked = on;
 }
 function loadPrefs() {
   var t = get("gsgw-theme", DEF.theme);
@@ -19,8 +27,16 @@ function loadPrefs() {
   fs = parseFloat(get("gsgw-fs", DEF.fs));
   lh = parseFloat(get("gsgw-lh", DEF.lh));
   applyText();
+  applyReadable(get("gsgw-readable", "") === "1");
 }
 loadPrefs();
+
+if (readableBox)
+  readableBox.addEventListener("change", function () {
+    applyReadable(readableBox.checked);
+    if (readableBox.checked) set("gsgw-readable", "1");
+    else del("gsgw-readable");
+  });
 
 if (sel)
   sel.addEventListener("change", function () {
@@ -50,12 +66,14 @@ if (reset)
     del("gsgw-theme");
     del("gsgw-fs");
     del("gsgw-lh");
+    del("gsgw-readable");
     root.setAttribute("data-theme", DEF.theme);
     applyThemeAssets(DEF.theme);
     if (sel) sel.value = DEF.theme;
     fs = DEF.fs;
     lh = DEF.lh;
     applyText();
+    applyReadable(DEF.readable);
     resetGiscusSync();
     syncGiscus();
   });

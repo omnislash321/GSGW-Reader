@@ -3,6 +3,7 @@
   <label class="sp-row">Theme <select id="theme"><% it.themes.forEach(function (t) { %><option value="<%= t[0] %>"><%= t[1] %></option><% }) %></select></label>
   <div class="sp-row">Font size <span class="sp-grp"><button data-font="-1">A−</button><button data-font="1">A+</button></span></div>
   <div class="sp-row">Line height <span class="sp-grp"><button data-lh="-1">−</button><button data-lh="1">+</button></span></div>
+  <label class="sp-row" title="Use a plain sans-serif and drop the decorative/cursive fonts">Accessible fonts <input type="checkbox" id="sp-readable" /></label>
   <div class="sp-row" id="sp-progress-row">This chapter <span class="sp-grp"><button id="sp-mark-read">Mark read</button><button id="sp-clear-ch">Clear</button></span></div>
   <div class="sp-row">All progress <span class="sp-grp"><button id="sp-clear-all">Clear</button></span></div>
   <button class="sp-reset" id="sp-reset">Reset to defaults</button>
