@@ -98,9 +98,15 @@ function tagRange(lines, start, end, type) {
 }
 
 // Every class this module assigns — used to stop two detectors fighting over one paragraph.
+// Matched ONLY against the <p>'s OWN class attribute, never inner spans: the gdoc importer emits
+// colour spans like <span class="c-sign">/<span class="c-info"> whose names would otherwise
+// collide with tokens here (e.g. `c-sign` ⊃ `sign`) and falsely mark a paragraph as tagged.
 const TAGGED =
-  /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record|verticaltext|pa)\b/;
-const isTagged = (line) => TAGGED.test(line);
+  /\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record|verticaltext|pa|sign|smoke)\b/;
+const isTagged = (line) => {
+  const m = line.match(/^<p\b[^>]*?\sclass="([^"]*)"/);
+  return m ? TAGGED.test(m[1]) : false;
+};
 
 // Tag each maximal run of >=minLen consecutive, not-already-tagged paragraphs that satisfy
 // `matchFn` with `type` (and -top/-bot on the run's ends).
@@ -138,8 +144,11 @@ const isShopLine = (line) => {
   const t = plainText(line);
   return t.includes("₩") || t.includes("※");
 };
-// Numbered choice / enumeration options ("1. Water", "2. Iron", …).
-const isOptionLine = (line) => /^\d+\.\s/.test(plainText(line));
+// Choice / enumeration options: numbered ("1. Water", "2. Iron") OR folded ▶/▷ menu bullets
+// ("▶ Bow your head", "▶State of…", "▶️…" with a variation selector). Both render as the same
+// options box and group in runs of 2+. The ▶ is line-INITIAL (a menu marker) — gauge bars start
+// with ‖/∥, never ▶, and isGaugeLine needs the WHOLE line to be symbols, so no collision here.
+const isOptionLine = (line) => /^(?:\d+\.\s|[▶▷]️?\s*\S)/.test(plainText(line));
 // Control-panel gauge: a lever bar (‖----‖) or a lone position marker (▲ ▼ ◀ ▶), used only
 // as the continuation of a "MIN MAX" label so it can't match stray dashes elsewhere.
 const isGaugeLine = (line) => {
@@ -162,6 +171,20 @@ const isVoiceLine = (line) => {
 // "B / U / R / N / I / N / G …"). Signature: a whole paragraph that is a single alphanumeric
 // character; tagged only in runs of 4+ so a stray one-letter line isn't swept up.
 const isVertChar = (line) => /^[A-Za-z0-9]$/.test(plainText(line));
+
+// Signs / signage: the source wraps notice-board text in curly braces (the TL convention for
+// signs, distinct from braced-free `note` flyers). A sign OPENS at a paragraph whose visible
+// text starts with "{" and CLOSES at the paragraph (at/after it) whose text ends with "}" — the
+// same line for a one-liner, a few lines down for a stacked sign ("{For Employee Exit /
+// Unauthorized Personnel / Keep Out}").
+const signOpens = (line) => plainText(line).startsWith("{");
+const signCloses = (line) => plainText(line).endsWith("}");
+
+// 130666 "smoke" relay: the contracted entity communicates in ">"-prefixed lines ("&gt;" in the
+// HTML, decoded by plainText to ">"). The source italicises them inconsistently, so the marker
+// alone is the signal — safe because a paragraph that OPENS with a literal ">" is always relay
+// text here, never ordinary prose (unlike a leading dash, which is too common to detect — see pa).
+const isSmokeLine = (line) => plainText(line).startsWith(">");
 
 // Return the html with enhancement classes applied. `blocks` is enhancements.json[chapterNum]
 // (an array of { type, from, to }) or undefined. Unresolved anchors are skipped silently here;
@@ -266,7 +289,44 @@ export function enhance(html, blocks = []) {
   //    paragraphs). Tight, centered styling makes the letters read as a vertical column.
   tagRuns(lines, isVertChar, "verticaltext", 4);
 
-  // 10. Hide the box-edge glyph lines that FRAME a styled box. A listed `scroll`/`lore` block is
+  // 10. Signs / signage (auto): notice text the source wraps in curly braces. Open at a "{"
+  //     paragraph; close at the paragraph (at/after it) ending "}" — same line for a one-liner,
+  //     a few lines down for a stacked sign. A run of directly-adjacent self-contained one-line
+  //     signs (a notice board) merges into one box. Bails on an unclosed "{" so a stray brace in
+  //     dialogue can't run styling off the end.
+  {
+    let i = 0;
+    while (i < lines.length) {
+      if (!isP(lines[i]) || isTagged(lines[i]) || !signOpens(lines[i])) {
+        i++;
+        continue;
+      }
+      let j = i;
+      while (j < lines.length && isP(lines[j]) && !isTagged(lines[j]) && !signCloses(lines[j])) j++;
+      const closed =
+        j < lines.length && isP(lines[j]) && !isTagged(lines[j]) && signCloses(lines[j]);
+      if (!closed) {
+        i++;
+        continue;
+      }
+      while (
+        j + 1 < lines.length &&
+        isP(lines[j + 1]) &&
+        !isTagged(lines[j + 1]) &&
+        signOpens(lines[j + 1]) &&
+        signCloses(lines[j + 1])
+      )
+        j++;
+      tagRange(lines, i, j, "sign");
+      i = j + 1;
+    }
+  }
+
+  // 11. 130666 "smoke" relay (auto): italic, ">"-prefixed lines from the contracted entity.
+  //     minLen 1 — a lone relay line still counts; consecutive lines group into one block.
+  tagRuns(lines, isSmokeLine, "smoke", 1);
+
+  // 12. Hide the box-edge glyph lines that FRAME a styled box. A listed `scroll`/`lore` block is
   //    anchored by its CONTENT, so the source's `+++` / `===` framing glyphs (below the 5+
   //    auto-lore threshold, or using `+`) survive as visible noise. Hide such a glyph line ONLY
   //    when it sits directly next to a box-tagged paragraph — so a stray, unrelated delimiter

@@ -1,5 +1,5 @@
 {
-  "_doc": "Maintainable list of special-styled chapter blocks that have NO self-evident markup. Keys are chapter numbers; each entry tags the paragraph run from `from`..`to` (inclusive) with a CSS class family `<type>`/`<type>-top`/`<type>-bot`, styled in assets/css/main.css. Anchors match a paragraph's PLAIN TEXT (tags + entities decoded), smallest valid span wins. `node devScripts/import-gdoc.mjs` re-validates anchors after an import and warns on misses. Most special blocks are AUTO-detected and need NO entry here: lore/system boxes (5+ ===/--- delimited), `[ ... ]` system messages (+ italic = announcement), business `card` (━━━ delimited), `terminal` (₩/※ shop runs), `options` (numbered lists), `panel` (MIN MAX gauge). Only list types with no reliable signal: idcard, chat, note, voice (spaced-caps mascot/system voice, e.g. `G O O D B O Y`), scroll (in-world invitation/manual text framed by `+++` in the source). A box delimiter shorter than the auto threshold (e.g. a `===` User-Guide box) is also listed by its content lines. Lone box-edge glyph lines (`+++`, `===`) framing a listed block are auto-hidden by enhance.mjs. NOTE: a listed entry styles ONE span (smallest from..to), and each entry claims the next not-yet-tagged match; a line that repeats identically in a chapter (e.g. `G O O D B O Y`) is tagged once PER listed entry, so list it N times to style all N occurrences.",
+  "_doc": "Maintainable list of special-styled chapter blocks that have NO self-evident markup. Keys are chapter numbers; each entry tags the paragraph run from `from`..`to` (inclusive) with a CSS class family `<type>`/`<type>-top`/`<type>-bot`, styled in assets/css/main.css. Anchors match a paragraph's PLAIN TEXT (tags + entities decoded), smallest valid span wins. `node devScripts/import-gdoc.mjs` re-validates anchors after an import and warns on misses. Most special blocks are AUTO-detected and need NO entry here: lore/system boxes (5+ ===/--- delimited), `[ ... ]` system messages (+ italic = announcement), business `card` (━━━ delimited), `terminal` (₩/※ shop runs), `options` (numbered `1.`/`2.` lists + `▶`/`▷` menus), `panel` (MIN MAX gauge), `voice` (spaced-caps mascot/system voice, e.g. `G O O D B O Y`), `sign` (signage wrapped in `{…}` curly braces), `smoke` (`>`-prefixed 130666 relay lines). Only list types with no reliable signal: idcard, chat, note, scroll (in-world invitation/manual text framed by `+++` in the source). A box delimiter shorter than the auto threshold (e.g. a `===` User-Guide box) is also listed by its content lines. Lone box-edge glyph lines (`+++`, `===`) framing a listed block are auto-hidden by enhance.mjs. NOTE: a listed entry styles ONE span (smallest from..to), and each entry claims the next not-yet-tagged match; a line that repeats identically in a chapter (e.g. `G O O D B O Y`) is tagged once PER listed entry, so list it N times to style all N occurrences.",
   "1": [
     { "type": "idcard", "from": "[Daydream Inc.]", "to": "Field Exploration team" },
     {
@@ -361,13 +361,6 @@
       "type": "idcard",
       "from": "Indulge in an even more distant memory!",
       "to": "<Fantasy Edition>"
-    }
-  ],
-  "276": [
-    {
-      "type": "note",
-      "from": "The escalator at Exit 2 is under construction. Please use another exit.",
-      "to": "Owner of lost cat wallet, please go to the station office"
     }
   ],
   "285": [

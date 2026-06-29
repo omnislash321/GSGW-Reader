@@ -886,6 +886,51 @@ body.nav-open .ab-toggle .ico-close {
   margin-bottom: 1.3em;
 }
 
+/* Sign / signage (auto: text the source wraps in {…} curly braces): an in-world posted notice
+   rendered as a bordered placard. Text alignment is left to the source (these are usually
+   class="center"); the frame is the visual cue. The literal braces stay in the text. */
+.cbody > p.sign {
+  margin: 0;
+  border-left: 1px solid var(--muted);
+  border-right: 1px solid var(--muted);
+  background: color-mix(in srgb, var(--muted) 10%, var(--card));
+  font-family: var(--ui);
+  font-size: 0.93em;
+  letter-spacing: 0.02em;
+  padding: 0.35em 1.4em;
+}
+.cbody > p.sign-top {
+  border-top: 1px solid var(--muted);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  margin-top: 1.3em;
+  padding-top: 0.6em;
+}
+.cbody > p.sign-bot {
+  border-bottom: 1px solid var(--muted);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  margin-bottom: 1.3em;
+  padding-bottom: 0.6em;
+}
+
+/* 130666 "smoke" relay (auto: italic ">"-prefixed lines): the contracted entity's speech —
+   drifting and impersonal. A non-box, muted, indented italic caption (the ">" marker stays). */
+.cbody > p.smoke {
+  font-style: italic;
+  font-family: var(--ui);
+  color: color-mix(in srgb, var(--muted) 70%, var(--fg));
+  letter-spacing: 0.04em;
+  padding-left: 1.4em;
+  margin: 0.3em 0;
+}
+.cbody > p.smoke-top {
+  margin-top: 1.4em;
+}
+.cbody > p.smoke-bot {
+  margin-bottom: 1.4em;
+}
+
 /* Scroll / invitation (listed type "scroll", source frames it with +++): in-world "transformed
    text" — exhibition invitations, manual pages. An aged-parchment card in a formal serif. Fixed
    warm palette (like card/terminal) so it reads the same on every theme. The +++ glyph lines are
