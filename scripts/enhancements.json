@@ -181,7 +181,7 @@
     }
   ],
   "87": [
-    { "type": "note", "from": "Qterw-C-1603", "to": "Security Clearance Completed [C]" },
+    { "type": "record", "from": "Qterw-C-1603", "to": "Security Clearance Completed [C]" },
     {
       "type": "record",
       "from": "Confirmed an advertisement flyer for a new product launch in Qterw-C-1603.",

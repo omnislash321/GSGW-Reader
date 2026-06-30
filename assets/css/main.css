@@ -337,6 +337,12 @@ body.nav-open .ab-toggle .ico-close {
 .cbody .c-sign {
   color: var(--sign);
 }
+.cbody .c-go {
+  color: var(--go);
+}
+.cbody .c-magic {
+  color: var(--magic);
+}
 .cbody mark {
   color: inherit;
   border-radius: 3px;
@@ -356,6 +362,12 @@ body.nav-open .ab-toggle .ico-close {
 }
 .cbody mark.c-sign {
   background: color-mix(in srgb, var(--sign) 24%, transparent);
+}
+.cbody mark.c-go {
+  background: color-mix(in srgb, var(--go) 22%, transparent);
+}
+.cbody mark.c-magic {
+  background: color-mix(in srgb, var(--magic) 22%, transparent);
 }
 
 /* ---- imported display fonts (mapped from Google Docs font-families in gdocs.js FONT_ROLES).

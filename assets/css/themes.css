@@ -72,16 +72,22 @@
   --warn: #e3b341;
   --danger: #ff6b6b;
   --sign: #f1c232;
+  --go: #5fd97a;
+  --magic: #c08bff;
 }
 [data-theme="office"] {
   --info: #2f5bd0;
   --warn: #9a7400;
   --danger: #d23b3b;
   --sign: #a07700;
+  --go: #2e8b3d;
+  --magic: #7d3bd0;
 }
 [data-theme="daydream"] {
   --info: #5566c0;
   --warn: #957510;
   --danger: #c2476b;
   --sign: #9c7a14;
+  --go: #3a9150;
+  --magic: #8a44c8;
 }

@@ -348,6 +348,12 @@ body {
 #editor .c-sign {
   color: var(--sign);
 }
+#editor .c-go {
+  color: var(--go);
+}
+#editor .c-magic {
+  color: var(--magic);
+}
 #editor mark {
   color: inherit;
   border-radius: 3px;
@@ -367,6 +373,12 @@ body {
 }
 #editor mark.c-sign {
   background: color-mix(in srgb, var(--sign) 24%, transparent);
+}
+#editor mark.c-go {
+  background: color-mix(in srgb, var(--go) 22%, transparent);
+}
+#editor mark.c-magic {
+  background: color-mix(in srgb, var(--magic) 22%, transparent);
 }
 #editor h2 {
   font-size: 1.25rem;

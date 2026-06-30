@@ -46,6 +46,9 @@ const COLOR_ROLES = {
   "#999999": "muted",
   "#bf9000": "warn",
   "#f1c232": "sign", // bright resort-signage gold (spaced-out Mascot announcements)
+  "#00ff00": "go", // vivid departure-board green (train destination signage, ch110)
+  "#9900ff": "magic", // vivid violet (destination signage ch110; tinted emoji ch148)
+  "#cc00ff": "magic", // magenta-violet — same role as #9900ff (near-identical hue)
 };
 export function colorRole(color) {
   return color ? COLOR_ROLES[normColor(color)] || null : null;
