@@ -255,9 +255,45 @@ body.nav-open .ab-toggle .ico-close {
 
 .chapter,
 .toc {
-  max-width: 54rem;
+  width: 100%;
+  max-width: 64rem;
   margin: 0 auto;
   padding: 1.5rem 1.25rem 7rem;
+}
+/* Two-column TOC: cover art on the left, chapter list on the right. The whole
+   block is sized to the viewport so the page itself doesn't scroll — instead the
+   chapter list (.toc-side .chlist) scrolls internally. The ~6rem reserved below
+   keeps the site footer on-screen without pushing the page taller than the viewport. */
+.toc--split {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 2rem;
+  align-items: stretch;
+  /* Reserve the footer's full height (2rem top pad + 2.4rem icons + 5.5rem
+     bottom pad added by body:has(.actionbar)) so main + footer fit one screen. */
+  height: calc(100dvh - 10rem);
+  padding-bottom: 1.5rem;
+}
+.toc-cover {
+  align-self: center; /* vertically center the cover art against the chapter list */
+}
+.toc-cover img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.toc-side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* let the flex child (.chlist) shrink so it can scroll */
+}
+.toc--split .chlist {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 .page {
   background: var(--card);
@@ -1424,14 +1460,17 @@ body.nav-open .ab-toggle .ico-close {
 }
 
 /* Parts landing: a block per story part (image + label) linking to its TOC. */
-.card--wide {
-  max-width: 52rem;
+.splash .card--wide {
+  max-width: 64rem;
 }
 .parts {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.1rem;
-  margin: 1.6rem 0 0.5rem;
+  /* Columns are at least 300px wide; auto-fit collapses to fewer columns
+     (down to a single stacked column) as the viewport narrows. The min()
+     guard keeps a 300px track from overflowing very small phones. */
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 1.6rem;
+  margin: 1.8rem 0 0.5rem;
 }
 .part-cell {
   display: flex;
@@ -1451,8 +1490,8 @@ body.nav-open .ab-toggle .ico-close {
   color: var(--fg);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.8rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.95rem;
   text-decoration: none;
 }
 .part-epub:hover {
@@ -1490,14 +1529,15 @@ body.nav-open .ab-toggle .ico-close {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0.5rem 0.6rem;
+  padding: 0.7rem 0.8rem;
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #fff;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
 }
 .part-range {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--muted);
 }
 .part--soon {
@@ -1563,6 +1603,24 @@ body:has(.actionbar) .site-foot {
   font-style: italic;
 }
 @media (max-width: 680px) {
+  /* Stack the split TOC: cover on top, list below, and let the page scroll
+     normally instead of the desktop viewport-locked internal scroll. */
+  .toc--split {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding-bottom: 7rem;
+  }
+  .toc-cover {
+    align-self: center;
+  }
+  .toc-cover img {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .toc--split .chlist {
+    flex: none;
+    overflow-y: visible;
+  }
   .cbody > p[id] {
     padding-right: 1.9rem;
   } /* slimmer gutter; touch has no hover so show it faintly */

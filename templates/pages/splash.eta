@@ -1,5 +1,5 @@
 <main class="splash">
-  <div class="card">
+  <div class="card card--wide">
     <img class="cover" data-logo src="/assets/img/logo-dark.png" alt="<%~ it.brandEsc %>">
     <h1><%~ it.brandEsc %></h1>
     <blockquote class="disc">“<%~ it.taglineEsc %>”</blockquote>

@@ -1,11 +1,16 @@
-<main class="toc">
-  <header class="chead"><p class="kicker"><%~ it.partNameEsc %></p><div class="chead-row"><h1>Contents</h1><% if (it.epubHref) { %><a class="epub-btn" href="<%= it.epubHref %>" download>Download EPUB</a><% } %></div></header>
-  <div class="resume-slot" data-resume hidden></div>
-  <div class="toc-controls">
-    <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">
-    <button id="toc-sort" data-dir="asc">Sort: Oldest first</button>
+<main class="toc<% if (it.image) { %> toc--split<% } %>">
+  <% if (it.image) { -%>
+  <div class="toc-cover"><img src="<%= it.image %>" alt="<%~ it.partNameEsc %>" loading="lazy"></div>
+  <% } -%>
+  <div class="toc-side">
+    <header class="chead"><p class="kicker"><%~ it.partNameEsc %></p><div class="chead-row"><h1>Contents</h1><% if (it.epubHref) { %><a class="epub-btn" href="<%= it.epubHref %>" download>Download EPUB</a><% } %></div></header>
+    <div class="resume-slot" data-resume hidden></div>
+    <div class="toc-controls">
+      <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">
+      <button id="toc-sort" data-dir="asc">Sort: Oldest first</button>
+    </div>
+    <ul class="chlist"<% if (it.countsApi) { %> data-counts-api="<%= it.countsApi %>"<% } %>><% it.chapters.forEach(function (c) { %><li data-num="<%~ c.numEsc %>" data-title="<%~ c.titleLowerEsc %>" data-slug="<%= c.slug %>"><a href="/chapters/<%= c.slug %>.html"><%~ c.titleEsc %></a></li><% }) %></ul>
+    <p class="back"><a href="/parts.html">← Back to parts</a></p>
   </div>
-  <ul class="chlist"<% if (it.countsApi) { %> data-counts-api="<%= it.countsApi %>"<% } %>><% it.chapters.forEach(function (c) { %><li data-num="<%~ c.numEsc %>" data-title="<%~ c.titleLowerEsc %>" data-slug="<%= c.slug %>"><a href="/chapters/<%= c.slug %>.html"><%~ c.titleEsc %></a></li><% }) %></ul>
-  <p class="back"><a href="/parts.html">← Back to parts</a></p>
 </main>
 <%~ include("../partials/actionbar", { chapters: false, comments: false, themes: it.themes }) %>

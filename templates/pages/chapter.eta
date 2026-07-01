@@ -11,4 +11,4 @@
   <%~ include("../partials/giscus", it) %>
   <% } -%>
 </main>
-<%~ include("../partials/actionbar", { chapters: true, comments: it.comments, themes: it.themes, tocHref: it.tocHref }) %>
+<%~ include("../partials/actionbar", { chapters: true, comments: it.comments, top: true, themes: it.themes, tocHref: it.tocHref }) %>
