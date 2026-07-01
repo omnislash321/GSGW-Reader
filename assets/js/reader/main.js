@@ -7,6 +7,8 @@
 //   gsgw-ctotals                     cached per-chapter comment totals  (toc-comments.js)
 //   gsgw-progress                    per-chapter reading-progress map (progress.js)
 //   gsgw-last                        slug of the most recently read chapter (progress.js)
+//   gsgw-announce-dismissed          id of the dismissed announcement banner (announce.js)
+import "./announce.js";
 import "./prefs.js";
 import "./settings-panel.js";
 import "./paragraph-comments.js";

@@ -6,6 +6,13 @@
   "tagline": "Welcome explorers of darkness",
   "description": "An unofficial fan reader for Got Dropped Into A Ghost Story, Still Gotta Work (GSGW).",
   "site_url": "https://gsgw-reader.pages.dev",
+  "_comment_announcement": "Site-wide banner shown above the main content on every page. Hide it by setting text to \"\" (or removing the block). href (optional) turns the text into a link. dismissible adds an × that stores the current banner id under a single localStorage key (gsgw-announce-dismissed), overwritten on each dismiss so it never accumulates stray keys. Bump id to re-show the banner to everyone after an edit.",
+  "announcement": {
+    "id": "fanart-contest-july-2026",
+    "text": "🎨 Part 3 launch fan art contest — win $15! Enter by July 6, 23:59 KST. Join our Discord for info →",
+    "href": "https://discord.gg/AXecqz9yR",
+    "dismissible": true
+  },
   "counts_api": "https://gsgw-counts.omnislash321.workers.dev/counts",
   "_comment_themes": "Theme [slug, label] pairs for the settings <select>; slugs must match [data-theme=…] blocks in assets/css/themes.css.",
   "themes": [

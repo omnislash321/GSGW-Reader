@@ -38,8 +38,17 @@ function page(bodyTemplate, data, { title, description, headExtra }) {
     content,
     headExtra: headExtra || "",
     links: SITE.links,
+    announcement: ANNOUNCEMENT,
   });
 }
+
+// Optional site-wide banner (see site.json `announcement`); null when unset/blank. Text is
+// pre-escaped here; href/id are author-controlled config and inserted raw by the template.
+const A = SITE.announcement;
+const ANNOUNCEMENT =
+  A && A.text
+    ? { id: A.id || "", textEsc: esc(A.text), href: A.href || "", dismissible: !!A.dismissible }
+    : null;
 
 // Self-hosted woff2 to <link rel=preload> when a chapter uses its f-* role, so only the faces a
 // chapter actually references are preloaded (unrelated chapters get nothing). f-chat (Comic Sans)

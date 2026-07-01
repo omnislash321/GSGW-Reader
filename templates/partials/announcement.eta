@@ -1,0 +1,8 @@
+<% if (it.announcement) { %><% var a = it.announcement %>
+<div class="announce" role="region" aria-label="Announcement"<% if (a.id) { %> data-announce-id="<%= a.id %>"<% } %>>
+  <div class="announce-inner">
+    <% if (a.href) { %><a class="announce-text" href="<%= a.href %>"><%~ a.textEsc %></a><% } else { %><span class="announce-text"><%~ a.textEsc %></span><% } %>
+    <% if (a.dismissible && a.id) { %><button class="announce-close" type="button" aria-label="Dismiss announcement">&times;</button><% } %>
+  </div>
+</div>
+<% } %>

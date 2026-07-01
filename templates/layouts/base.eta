@@ -10,8 +10,10 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <%~ it.headExtra %>
     <script>(function(){try{var t=localStorage.getItem('gsgw-theme');if(t)document.documentElement.setAttribute('data-theme',t);var v=(t==='office'||t==='daydream')?'dark':'light';document.querySelectorAll('link.themed-icon').forEach(function(l){l.href='/assets/img/'+l.dataset.icon+'-'+v+'.png';});}catch(e){}})();</script>
+    <% if (it.announcement && it.announcement.dismissible && it.announcement.id) { %><script>(function(){try{if(localStorage.getItem('gsgw-announce-dismissed')==='<%= it.announcement.id %>')document.documentElement.classList.add('announce-dismissed');}catch(e){}})();</script><% } %>
   </head>
   <body>
+    <%~ include("../partials/announcement", { announcement: it.announcement }) %>
     <%~ it.content %>
     <%~ include("../partials/footer", { links: it.links }) %>
     <script type="module" src="/assets/js/reader/main.js"></script>
