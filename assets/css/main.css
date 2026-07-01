@@ -225,6 +225,40 @@ body.nav-open .ab-toggle .ico-close {
 .chead {
   margin: 2rem 0 1.5rem;
 }
+/* Part switcher across the top of a TOC: pill-segmented tabs for each part.
+   Current part is filled; other live parts link to their TOC; coming-soon is muted. */
+.part-switch {
+  display: inline-flex;
+  gap: 0.2rem;
+  margin: 0 0 0.6rem;
+  padding: 0.2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.part-switch-tab {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.part-switch-tab:hover {
+  color: var(--fg);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  text-decoration: none;
+}
+.part-switch-tab.is-current {
+  background: var(--accent);
+  color: var(--bg);
+}
+.part-switch-tab.is-soon {
+  opacity: 0.5;
+  cursor: default;
+}
 .chead h1 {
   margin: 0.2rem 0;
   font-size: 1.9rem;

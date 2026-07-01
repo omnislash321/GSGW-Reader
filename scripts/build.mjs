@@ -175,6 +175,13 @@ function build() {
         {
           chapters: tocChapters,
           partNameEsc: esc(part.name),
+          // Switcher across the top of the TOC: every part, current one flagged,
+          // live parts link to their TOC, coming-soon parts render disabled.
+          partNav: PARTS.map((p) => ({
+            nameEsc: esc(p.name),
+            href: p.start != null ? tocHref(p) : "",
+            current: p === part,
+          })),
           image: part.image || "",
           epubHref: epubHref(part.slug),
           countsApi: comments ? SITE.counts_api || "" : "",
