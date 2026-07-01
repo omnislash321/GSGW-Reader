@@ -910,7 +910,11 @@ a.part-switch-tab:hover {
   font-family: ui-monospace, Consolas, monospace;
   font-size: 0.9em;
   letter-spacing: 0.12em;
-  text-align: center;
+  /* Left-aligned + preserved whitespace so the ▲ marker keeps the raw source's
+     horizontal position (bare = MIN, &nbsp;-indented = MAX). Centering each line
+     independently would drop that position and collapse the leading spaces. */
+  text-align: left;
+  white-space: pre;
   padding: 0.12em 2.1rem 0.12em 1em;
 }
 .cbody > p.panel-top {
